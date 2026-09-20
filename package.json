@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:flow": "node scripts/test-e2e.js"
   },
   "dependencies": {
     "lucide-react": "^1.47.0",
