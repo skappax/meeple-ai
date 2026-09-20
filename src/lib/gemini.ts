@@ -1,4 +1,4 @@
-import { ChatMode, Role } from '@/types/chat';
+import { ChatMode, Role, Attachment } from '@/types/chat';
 import { findVerifiedRuleContext } from '@/lib/rules-kb';
 
 export const DEFAULT_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
@@ -71,7 +71,14 @@ PROTOCOLLO UFFICIALE ARBITRAGGIO REGOLE (SOLO per contestazioni e dubbi su regol
   2. 📖 **Regola Ufficiale del Manuale**: Spiega la regola ufficiale del manuale o dell'Almanacco con rigore.
   3. ⚠️ **Distinzione Chiave & Errori Comuni**: Chiarisci l'equivoco o la falsa credenza che spesso fa nascere la lite al tavolo.
   4. 💡 **Cosa fare adesso al tavolo**: Istruzione chiara e pratica per far ripartire subito la partita.
-- NON inventare regole e NON confondere mai le regole di edizioni o espansioni diverse senza specificarlo.`;
+- NON inventare regole e NON confondere mai le regole di edizioni o espansioni diverse senza specificarlo.
+
+📷 ANALISI FOTOGRAFICA E DOCUMENTI (MULTIMODALE):
+- Se l'utente allega una foto del tabellone, delle carte o delle tessere di gioco:
+  * Ispeziona con attenzione la disposizione visiva, il testo visibile sulle carte o le posizioni dei meeple/segnalini.
+  * Formula la tua risposta o verdetto basandoti esattamente su ciò che vedi nell'immagine.
+- Se l'utente allega un file PDF di un regolamento:
+  * Utilizza il testo del documento come fonte primaria per dirimere ogni dubbio con massima aderenza.`;
 
   const contextNote = gameContext ? `\n\nAttualmente il tavolo sta giocando a: **${gameContext}**.` : '';
   const groundingNote = verifiedGrounding ? `\n\n${verifiedGrounding}` : '';
@@ -162,7 +169,7 @@ export async function callGeminiChat({
   apiKey,
   gameContext,
 }: {
-  messages: { role: Role; content: string }[];
+  messages: { role: Role; content: string; attachment?: Attachment }[];
   mode?: ChatMode;
   model?: string;
   apiKey?: string;
@@ -190,13 +197,32 @@ export async function callGeminiChat({
   const verifiedGrounding = findVerifiedRuleContext(lastUserMessage, gameContext);
   const systemInstruction = getSystemPrompt(mode, gameContext, verifiedGrounding);
 
-  // Converti i messaggi nel formato Gemini API
+  // Converti i messaggi nel formato Gemini API con supporto Multimodale
   const contents = messages
     .filter((m) => m.role !== 'system')
-    .map((m) => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }],
-    }));
+    .map((m) => {
+      const parts: Record<string, unknown>[] = [
+        { text: m.content || '(Analizza questo allegato per il tavolo)' },
+      ];
+
+      if (m.attachment?.data) {
+        const base64Data = m.attachment.data.includes(',')
+          ? m.attachment.data.split(',')[1]
+          : m.attachment.data;
+
+        parts.push({
+          inlineData: {
+            mimeType: m.attachment.mimeType || 'image/jpeg',
+            data: base64Data,
+          },
+        });
+      }
+
+      return {
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts,
+      };
+    });
 
   const payload = {
     system_instruction: {

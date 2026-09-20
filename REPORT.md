@@ -115,7 +115,18 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 
 ---
 
-## 📊 Stato Avanzamento (Sprint 1, 2, 3 & 4 Completati)
+### ADR 014 — Suite Multimodale Completa: Microfono (STT), Fotocamera (Gemini Vision), Import PDF e Sintesi Vocale Intelligente (TTS)
+- **Data:** 2026-09-20
+- **Decisione:** Implementazione del pacchetto multimodale completo per trasformare MeepleAI in un assistente "hands-free" al tavolo:
+  1. *Microfono (Speech-to-Text):* Integrazione della Web Speech API nativa (`SpeechRecognition`) in lingua italiana. Tappando l'icona microfono nella barra chat, MeepleAI ascolta in tempo reale con animazione a pulsazione rossa, trascrivendo fedelmente la domanda senza dover digitare.
+  2. *Fotocamera & Visione Multimodale (Gemini Vision):* Pulsante dedicato per scattare una foto al tabellone o a una carta dal vivo su mobile o caricare dalla galleria. Compressione automatica client-side via HTML5 Canvas (max 1280px JPEG) per azzerare la latenza di upload. Inoltro inline a Gemini API per analisi visiva immediata della partita.
+  3. *Import File PDF:* Supporto nativo al caricamento di regolamenti PDF con chip di anteprima e invio a Gemini come contesto documentale prioritario.
+  4. *Sintesi Vocale Intelligente (Text-to-Speech):* Tramite `window.speechSynthesis`, se la domanda è stata dettata con il microfono (o premendo il tasto "Ascolta" 🔊 sul messaggio), MeepleAI legge a voce alta il verdetto. L'algoritmo di estrazione estrae prioritariamente il **Verdetto secco e la Regola chiave** (sintesi di 10-15 secondi) per non interrompere il flusso della partita al tavolo.
+  5. *Test Suite QA Estesa (10/10 PASSED):* Aggiunti test per l'elaborazione di payload visivi base64 e per la logica di estrazione del verdetto audio senza sintassi markdown.
+
+---
+
+## 📊 Stato Avanzamento (Sprint 1, 2, 3, 4 & 5 Completati)
 - [x] Scaffolding Next.js 14 con TypeScript e Tailwind CSS
 - [x] Integrazione e test convalidato della chiave Google Gemini API
 - [x] Endpoint backend `/api/chat` con prompt specializzati e fallback
@@ -137,12 +148,16 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Guardrail di Dominio Ferreo (rifiuto categorico richieste non ludiche o sviluppo software)**
 - [x] **Limiti di sicurezza e validazione richieste (max 2000 caratteri per messaggio)**
 - [x] **Rimozione pulsante e popup inutile '+ Specifica Gioco' per massima pulizia mobile**
-- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) estesa a 8 test di validazione con esito 8/8 PASSED**
+- [x] **Microfono (Speech-to-Text) con trascrizione vocale in tempo reale**
+- [x] **Fotocamera e Visione Gemini (analisi fotografica del tabellone e carte)**
+- [x] **Import File (caricamento regolamenti PDF e immagini compresse)**
+- [x] **Sintesi Vocale (Text-to-Speech) con lettura automatica e verdetto rapido in 10-15s**
+- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) estesa a 10 test con esito 10/10 PASSED**
 
 ---
 
 ## 🔮 Prossimi Passi (Roadmap)
-1. **Ricerca regole avanzata / Caricamento PDF:** Possibilità di caricare il PDF del regolamento di un gioco inedito o autoprodoto.
-2. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
-3. **Deploy su Render.com / Vercel:** Messa online con dominio pubblico gratuito.
+1. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
+2. **Deploy su Render.com / Vercel:** Messa online con dominio pubblico gratuito.
+
 

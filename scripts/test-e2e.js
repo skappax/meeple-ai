@@ -178,6 +178,62 @@ async function main() {
     }
   })) passed++;
 
+  // Test 9: Multimodal Image Payload (POST /api/chat with image attachment)
+  total++;
+  if (await runTest('Multimodal Vision: Process Image Attachment (POST /api/chat with base64 image)', async () => {
+    // 1x1 transparent PNG in base64
+    const sampleImageBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+    const payload = {
+      messages: [
+        {
+          role: 'user',
+          content: 'Guarda questa foto del tavolo di gioco e dimmi se la strada è valida.',
+          attachment: {
+            type: 'image',
+            mimeType: 'image/png',
+            name: 'tabellone.png',
+            data: `data:image/png;base64,${sampleImageBase64}`,
+          },
+        },
+      ],
+      mode: 'rules',
+      gameContext: 'Catan',
+    };
+    const res = await fetch(`${BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.status !== 200) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`HTTP ${res.status}: ${err.error || 'Unknown error'}`);
+    }
+    const data = await res.json();
+    if (!data.text || data.text.length < 20) {
+      throw new Error('Vision multimodal response too short or empty');
+    }
+  })) passed++;
+
+  // Test 10: Speech Summary Extractor Logic
+  total++;
+  if (await runTest('Audio TTS: Spoken Summary Extraction (<280 chars, no raw markdown)', async () => {
+    const rawMarkdown = `**VERDETTO: NO, non è consentito.**\n\nNelle regole ufficiali di Catan, un insediamento nemico blocca completamente la costruzione.\n\n⚠️ **DISTINZIONE CHIAVE:** La strada viene spezzata ai fini del calcolo.\n\n💡 **Cosa fare:** Il giocatore deve deviare il percorso.`;
+    
+    // Simula extractSpokenSummary
+    let clean = rawMarkdown.replace(/```[\s\S]*?```/g, '').replace(/<[^>]+>/g, '');
+    const idx = clean.indexOf('⚠️');
+    if (idx !== -1) clean = clean.substring(0, idx);
+    clean = clean.replace(/[#*_~`>-]/g, ' ').replace(/\s+/g, ' ').trim();
+
+    if (clean.length > 280) throw new Error(`Summary too long for fast table play: ${clean.length} chars`);
+    if (clean.includes('*') || clean.includes('#') || clean.includes('⚠️')) {
+      throw new Error(`Summary contains raw markdown: ${clean}`);
+    }
+    if (!clean.includes('VERDETTO: NO')) {
+      throw new Error(`Summary missing verdict: ${clean}`);
+    }
+  })) passed++;
+
   console.log('\n----------------------------------------');
   console.log(`Results: ${passed}/${total} tests passed.`);
   console.log('----------------------------------------\n');

@@ -21,16 +21,32 @@ export async function POST(req: NextRequest) {
     }
 
     const lastMsg = messages[messages.length - 1];
-    if (!lastMsg || typeof lastMsg.content !== 'string' || !lastMsg.content.trim()) {
+    const hasAttachment = Boolean(lastMsg?.attachment?.data);
+
+    if (!lastMsg || (typeof lastMsg.content !== 'string' && !hasAttachment)) {
       return NextResponse.json(
         { error: 'Il messaggio inviato non può essere vuoto.' },
         { status: 400 }
       );
     }
 
-    if (lastMsg.content.length > 2000) {
+    if (!hasAttachment && (!lastMsg.content || !lastMsg.content.trim())) {
+      return NextResponse.json(
+        { error: 'Il messaggio inviato non può essere vuoto.' },
+        { status: 400 }
+      );
+    }
+
+    if (lastMsg.content && lastMsg.content.length > 2000) {
       return NextResponse.json(
         { error: 'Il messaggio è troppo lungo (massimo 2000 caratteri).' },
+        { status: 400 }
+      );
+    }
+
+    if (hasAttachment && lastMsg.attachment?.data && lastMsg.attachment.data.length > 25 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'L\'allegato supera la dimensione massima consentita.' },
         { status: 400 }
       );
     }

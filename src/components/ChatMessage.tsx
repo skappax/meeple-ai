@@ -1,18 +1,39 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Copy, Check, User } from 'lucide-react';
+import { Copy, Check, User, Volume2, Square, FileText } from 'lucide-react';
 import { ChatMessage as ChatMessageType } from '@/types/chat';
+import { speakText, stopSpeaking, isSpeechSynthesisSupported } from '@/lib/speech';
 
 interface ChatMessageProps {
   message: ChatMessageType;
+  autoSpeak?: boolean;
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, autoSpeak = false }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  // Auto-play per comandi vocali se abilitato
+  useEffect(() => {
+    if (!isUser && (message.wasVoice || autoSpeak) && isSpeechSynthesisSupported()) {
+      const started = speakText(
+        message.content,
+        () => setIsPlayingAudio(true),
+        () => setIsPlayingAudio(false)
+      );
+      if (started) {
+        setIsPlayingAudio(true);
+      }
+    }
+    return () => {
+      stopSpeaking();
+    };
+  }, [message.id, isUser, message.wasVoice, autoSpeak, message.content]);
 
   const handleCopy = async () => {
     try {
@@ -24,12 +45,47 @@ export function ChatMessage({ message }: ChatMessageProps) {
     }
   };
 
+  const handleToggleSpeech = () => {
+    if (isPlayingAudio) {
+      stopSpeaking();
+      setIsPlayingAudio(false);
+    } else {
+      const started = speakText(
+        message.content,
+        () => setIsPlayingAudio(true),
+        () => setIsPlayingAudio(false)
+      );
+      if (started) {
+        setIsPlayingAudio(true);
+      }
+    }
+  };
+
   if (isUser) {
     return (
       <div className="flex justify-end mb-6">
         <div className="flex gap-3 max-w-[85%] lg:max-w-[75%] items-start">
           <div className="bg-amber-600/90 text-slate-50 px-4 py-3 rounded-2xl rounded-tr-sm shadow-md text-sm leading-relaxed whitespace-pre-wrap selection:bg-amber-800 selection:text-white">
-            {message.content}
+            {/* User Attached Media (Image or PDF) */}
+            {message.attachment && (
+              <div className="mb-2.5">
+                {message.attachment.type === 'image' ? (
+                  <img
+                    src={message.attachment.data}
+                    alt="Foto tabellone/carta"
+                    className="max-h-56 max-w-full rounded-xl object-contain border border-amber-300/40 shadow-sm bg-black/20"
+                  />
+                ) : (
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-700/80 border border-amber-400/40 text-xs">
+                    <FileText className="w-4 h-4 text-amber-200 shrink-0" />
+                    <span className="truncate font-medium">{message.attachment.name}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* User Message Text */}
+            {message.content && <div>{message.content}</div>}
           </div>
           <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 text-slate-300">
             <User className="w-4 h-4" />
@@ -56,24 +112,51 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <span className="text-[10px] text-slate-400">Arbitro & Regole</span>
             </div>
 
-            {/* Copy Button */}
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-amber-300 bg-slate-800/60 hover:bg-slate-800 px-2 py-1 rounded transition-colors"
-              title="Copia risposta"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3 h-3 text-emerald-400" />
-                  <span className="text-emerald-400">Copiato</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3 h-3" />
-                  <span>Copia</span>
-                </>
+            <div className="flex items-center gap-1.5">
+              {/* Text-to-Speech Button */}
+              {isSpeechSynthesisSupported() && (
+                <button
+                  onClick={handleToggleSpeech}
+                  className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded transition-colors ${
+                    isPlayingAudio
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                      : 'text-slate-400 hover:text-amber-300 bg-slate-800/60 hover:bg-slate-800'
+                  }`}
+                  title={isPlayingAudio ? 'Ferma lettura a voce' : 'Ascolta verdetto a voce alta'}
+                >
+                  {isPlayingAudio ? (
+                    <>
+                      <Square className="w-3 h-3 fill-amber-300 text-amber-300 animate-pulse" />
+                      <span className="text-amber-300">Ferma</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="w-3 h-3" />
+                      <span>Ascolta</span>
+                    </>
+                  )}
+                </button>
               )}
-            </button>
+
+              {/* Copy Button */}
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-amber-300 bg-slate-800/60 hover:bg-slate-800 px-2 py-1 rounded transition-colors"
+                title="Copia risposta"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-400">Copiato</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3" />
+                    <span>Copia</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Markdown Content */}

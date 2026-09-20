@@ -2,11 +2,21 @@ export type Role = 'user' | 'assistant' | 'system';
 
 export type ChatMode = 'general' | 'rules' | 'recommend' | 'setup' | 'explain' | 'summary';
 
+export interface Attachment {
+  type: 'image' | 'file';
+  mimeType: string;
+  name: string;
+  data: string; // base64 data URL
+  size?: number;
+}
+
 export interface ChatMessage {
   id: string;
   role: Role;
   content: string;
   timestamp: number;
+  attachment?: Attachment;
+  wasVoice?: boolean;
 }
 
 export interface Conversation {
@@ -20,8 +30,13 @@ export interface Conversation {
 }
 
 export interface SendMessagePayload {
-  messages: { role: Role; content: string }[];
+  messages: {
+    role: Role;
+    content: string;
+    attachment?: Attachment;
+  }[];
   mode?: ChatMode;
   model?: string;
   apiKey?: string; // optional client override
+  gameContext?: string;
 }

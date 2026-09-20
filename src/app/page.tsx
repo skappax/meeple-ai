@@ -8,7 +8,7 @@ import { PromptStarters } from '@/components/PromptStarters';
 import { ChatInput } from '@/components/ChatInput';
 import { GameCard } from '@/components/GameCard';
 import { SettingsModal } from '@/components/SettingsModal';
-import { Conversation, ChatMessage as ChatMessageType, ChatMode } from '@/types/chat';
+import { Conversation, ChatMessage as ChatMessageType, ChatMode, Attachment } from '@/types/chat';
 import { GameInfo } from '@/types/game';
 
 const STORAGE_KEY = 'meeple_ai_conversations';
@@ -152,9 +152,14 @@ export default function Home() {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  const handleSendMessage = async (promptOverride?: string, modeOverride?: ChatMode) => {
+  const handleSendMessage = async (
+    promptOverride?: string,
+    modeOverride?: ChatMode,
+    attachment?: Attachment,
+    wasVoice?: boolean
+  ) => {
     const textToSend = (promptOverride || input).trim();
-    if (!textToSend || isLoading) return;
+    if ((!textToSend && !attachment) || isLoading) return;
 
     const modeToUse = modeOverride || currentMode;
     if (modeOverride) setCurrentMode(modeOverride);
@@ -166,13 +171,16 @@ export default function Home() {
     const userMessage: ChatMessageType = {
       id: 'msg_' + Date.now(),
       role: 'user',
-      content: textToSend,
+      content: textToSend || (attachment ? `Analisi di: ${attachment.name}` : ''),
       timestamp: Date.now(),
+      attachment,
+      wasVoice,
     };
 
     if (!currentConv) {
       // Auto-generate title
-      const title = textToSend.length > 30 ? textToSend.slice(0, 30) + '...' : textToSend;
+      const rawTitle = textToSend || (attachment ? attachment.name : 'Nuova partita');
+      const title = rawTitle.length > 30 ? rawTitle.slice(0, 30) + '...' : rawTitle;
       const newConv: Conversation = {
         id: 'conv_' + Date.now(),
         title,
@@ -189,10 +197,11 @@ export default function Home() {
     } else {
       // If it was the first message or titled "Nuova partita", update title
       const isFirst = currentConv.messages.length === 0;
+      const rawTitle = textToSend || (attachment ? attachment.name : 'Nuova partita');
       const updatedTitle = isFirst
-        ? textToSend.length > 30
-          ? textToSend.slice(0, 30) + '...'
-          : textToSend
+        ? rawTitle.length > 30
+          ? rawTitle.slice(0, 30) + '...'
+          : rawTitle
         : currentConv.title;
 
       const updatedConv: Conversation = {
@@ -219,7 +228,11 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: historyForApi.map((m) => ({ role: m.role, content: m.content })),
+          messages: historyForApi.map((m) => ({
+            role: m.role,
+            content: m.content,
+            attachment: m.attachment,
+          })),
           mode: modeToUse,
           model: activeModel,
           apiKey: customApiKey || undefined,
@@ -238,6 +251,7 @@ export default function Home() {
         role: 'assistant',
         content: data.text,
         timestamp: Date.now(),
+        wasVoice, // Propaga flag vocale per TTS automatico se la domanda è arrivata da microfono
       };
 
       setConversations((prev) =>
@@ -448,7 +462,7 @@ export default function Home() {
         <ChatInput
           input={input}
           setInput={setInput}
-          onSend={() => handleSendMessage()}
+          onSend={(att, voice) => handleSendMessage(undefined, undefined, att, voice)}
           isLoading={isLoading}
           mode={currentMode}
           gameContext={gameContext}
