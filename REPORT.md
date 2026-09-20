@@ -181,12 +181,14 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Citazione obbligatoria in coda con riferimento alla regola e manuale (📜 Riferimento: ...)**
 - [x] **Cambio automatico modalità da intento dell'utente (es. domanda di setup da regole)**
 - [x] **Cornice cromatica distintiva e palette colori dedicata per ciascuna delle 6 modalità**
-- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) estesa a 12 test con esito 12/12 PASSED**
+- [x] **Preparazione al Deploy: Blueprint render.yaml e guida passo-passo RENDER_DEPLOY.md**
+- [x] **Configurazione di sicurezza .gitignore per file .env e chiavi API**
 
 ---
 
 ## 🔮 Prossimi Passi (Roadmap)
-1. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
-2. **Deploy su Render.com / Vercel:** Messa online con dominio pubblico gratuito.
+1. **Pubblicazione Repository GitHub (`skappax/meeple-ai`) e Deploy su Render.com**
+2. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
+
 
 
