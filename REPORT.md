@@ -90,6 +90,12 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   3. *Protocollo Ufficiale Arbitro:* Le risposte sulle regole iniziano obbligatoriamente con il verdetto perentorio (**🎯 VERDETTO: NO, non è consentito / SÌ, è consentito**) in prima riga per consultazione rapida da cellulare, seguito dalla regola ufficiale, dalla spiegazione dell'errore comune e da cosa fare subito al tavolo.
   4. *Modello di Produzione & Cascata Multi-Tier:* Utilizzo di `gemini-flash-latest` (Gemini 3.8 con reasoning profondo) con catena automatica di fallback (`gemini-3.5-flash` -> `gemini-3.5-flash-lite`) per garantire zero interruzioni e quote elevate.
 
+### ADR 011 — Permanent Icon Rail & Single Auto-Rotating Example Ticker
+- **Data:** 2026-09-20
+- **Decisione:**
+  1. *Colonna Icone Permanente (Icon Rail):* Sostituzione della sidebar ad apertura/chiusura con una colonna verticale fissa di sole icone (48px su mobile / 56px su desktop). Cambio modalità e nuova chat sono a portata di 1 tap immediato senza cassetti da dover chiudere. La cronologia si apre come pannello flyout solo quando richiesto.
+  2. *Box Singolo con Esempi a Rotazione (10 Esempi):* Eliminazione delle card verticali ingombranti in favore di un unico box compatto da ~44px di altezza con timer automatico di scorrimento (4s), frecce manuali (`‹ ›`) e 10 esempi reali su più giochi (*Catan, Carcassonne, Wingspan, Terraforming Mars, Dune, Azul, 7 Wonders, Scythe*).
+
 ---
 
 ## 📊 Stato Avanzamento (Sprint 1 & 2 Completati)
@@ -105,7 +111,8 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] Build di produzione (`npm run build`) validata senza errori
 - [x] Server di sviluppo attivo su porta `3000` (IP `192.168.1.174:3000`)
 - [x] Mappatura fonti specializzate in `SOURCES.md` e diario ADR in `REPORT.md`
-- [x] **Semplificazione Mobile-First della Home (zero scrolling, touch targets $\ge$ 44px, esempi statici non cliccabili)**
+- [x] **Semplificazione Mobile-First: Colonna Icone fissa (senza cassetti da chiudere)**
+- [x] **Box Singolo compatto con 10 Esempi a Scorrimento Automatico**
 - [x] **Integrazione Knowledge Base Regole Verificate (BGG & Manuali Ufficiali) con Protocollo Arbitro Imparziale**
 
 ---

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Menu, Sparkles, Gamepad2, RotateCcw } from 'lucide-react';
+import { Sparkles, Gamepad2, RotateCcw } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { ChatMessage } from '@/components/ChatMessage';
 import { PromptStarters } from '@/components/PromptStarters';
@@ -24,7 +24,6 @@ export default function Home() {
   const [activeModel, setActiveModel] = useState('gemini-3.6-flash');
   const [customApiKey, setCustomApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
@@ -123,7 +122,6 @@ export default function Home() {
     setActiveId(newConv.id);
     setCurrentMode(mode);
     setGameContext('');
-    setIsSidebarOpen(false);
   };
 
   const handleSelectConversation = (id: string) => {
@@ -133,7 +131,6 @@ export default function Home() {
       setCurrentMode(conv.mode || 'general');
       setGameContext(conv.gameContext || '');
     }
-    setIsSidebarOpen(false);
   };
 
   const handleDeleteConversation = (id: string, e: React.MouseEvent) => {
@@ -298,33 +295,22 @@ export default function Home() {
         }}
         onOpenSettings={() => setIsSettingsOpen(true)}
         activeModel={activeModel}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
       />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#0d0f15]">
         {/* Top Navbar */}
         <header className="h-12 border-b border-slate-800/80 px-3 sm:px-4 flex items-center justify-between bg-[#12141c]/90 backdrop-blur-md z-10 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 lg:hidden"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate max-w-[160px] sm:max-w-none">
-                {activeConversation?.title || 'MeepleAI Chat'}
+          <div className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate max-w-[180px] sm:max-w-none">
+              {activeConversation?.title || 'MeepleAI Chat'}
+            </span>
+            {gameContext && (
+              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium bg-amber-500/15 border border-amber-500/30 text-amber-300 px-2 py-0.5 rounded">
+                <Gamepad2 className="w-3 h-3" />
+                {gameContext}
               </span>
-              {gameContext && (
-                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium bg-amber-500/15 border border-amber-500/30 text-amber-300 px-2 py-0.5 rounded">
-                  <Gamepad2 className="w-3 h-3" />
-                  {gameContext}
-                </span>
-              )}
-            </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">
