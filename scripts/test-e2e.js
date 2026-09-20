@@ -234,6 +234,23 @@ async function main() {
     }
   })) passed++;
 
+  // Test 11: Auto Mode Switching (Setup query while in Rules mode -> switches to 'setup')
+  total++;
+  if (await runTest('Auto Mode Switching: Rules -> Setup on "come si fa il setup"', async () => {
+    // Check regex pattern matching
+    const q = 'come si fa il setup di Wingspan?';
+    const isSetup = /\b(setup|set\s*up)\b/i.test(q);
+    if (!isSetup) throw new Error('Failed to match setup pattern');
+  })) passed++;
+
+  // Test 12: Auto Mode Switching (Rules query while in Setup mode -> switches to 'rules')
+  total++;
+  if (await runTest('Auto Mode Switching: Setup -> Rules on "è consentito costruire..."', async () => {
+    const q = 'è consentito costruire una strada oltre la colonia nemica?';
+    const isRules = /(?:^|\s|[.,!?])(è|e'|e)\s+(consentito|legale|permesso|vietato|possibile)\b/i.test(q);
+    if (!isRules) throw new Error('Failed to match rules pattern');
+  })) passed++;
+
   console.log('\n----------------------------------------');
   console.log(`Results: ${passed}/${total} tests passed.`);
   console.log('----------------------------------------\n');

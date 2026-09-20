@@ -17,6 +17,7 @@ export interface ChatMessage {
   timestamp: number;
   attachment?: Attachment;
   wasVoice?: boolean;
+  mode?: ChatMode;
 }
 
 export interface Conversation {

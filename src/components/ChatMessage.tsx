@@ -8,6 +8,8 @@ import { Copy, Check, User, Volume2, Square, FileText } from 'lucide-react';
 import { ChatMessage as ChatMessageType } from '@/types/chat';
 import { speakText, stopSpeaking, isSpeechSynthesisSupported } from '@/lib/speech';
 
+import { MODE_CONFIGS } from '@/lib/mode-helper';
+
 interface ChatMessageProps {
   message: ChatMessageType;
   autoSpeak?: boolean;
@@ -17,6 +19,9 @@ export function ChatMessage({ message, autoSpeak = false }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  const msgMode = message.mode || 'general';
+  const theme = MODE_CONFIGS[msgMode] || MODE_CONFIGS.general;
 
   // Auto-play per comandi vocali se abilitato
   useEffect(() => {
@@ -103,13 +108,15 @@ export function ChatMessage({ message, autoSpeak = false }: ChatMessageProps) {
           🎲
         </div>
 
-        {/* Bubble */}
-        <div className="relative group bg-[#161923] border border-slate-800/80 px-5 py-4 rounded-2xl rounded-tl-sm shadow-lg text-slate-200 text-sm w-full">
+        {/* Bubble with Distinct Mode Colored Frame */}
+        <div className={`relative group bg-[#161923] border ${theme.borderSubtle} border-l-4 ${theme.border} px-5 py-4 rounded-2xl rounded-tl-sm ${theme.glow} shadow-lg text-slate-200 text-sm w-full transition-all`}>
           {/* Header Bar inside assistant message */}
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/60">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-amber-400 text-xs tracking-wide">MeepleAI</span>
-              <span className="text-[10px] text-slate-400">Arbitro & Regole</span>
+              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${theme.bgBadge} ${theme.textBadge} border ${theme.borderSubtle}`}>
+                {theme.label}
+              </span>
             </div>
 
             <div className="flex items-center gap-1.5">

@@ -132,9 +132,27 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   3. *In tutte le modalità:* Anche in Spiegazione (Manuale Ufficiale), Setup (Scheda di Preparazione) e Scheda Tecnica (Fonte Metriche: BoardGameGeek) viene apposta la citazione in calce.
   4. *TTS Audio Isolation:* L'algoritmo di sintesi vocale (`extractSpokenSummary`) esclude la citazione in coda dalla lettura a voce alta, garantendo che l'audio resti rapido e focalizzato sul solo verdetto secco (10-15s), mentre la citazione rimane consultabile visivamente sullo schermo.
 
+### ADR 016 — Cambio Automatico Modalità da Intento (Auto Mode Switching) e Cornici Cromatiche Distintive
+- **Data:** 2026-09-20
+- **Decisione:** Risolto il disallineamento quando l'utente si trova in una modalità (es. *Arbitro Regole*) e pone una domanda di tutt'altra natura (es. *Setup Rapido* o *Scheda BGG*):
+  1. *Rilevamento Automatico dell'Intento (`detectModeFromQuery`):* Il client analizza il testo del messaggio e rileva se l'intento appartiene a un'altra modalità (`setup`, `rules`, `explain`, `summary`, `recommend`). Se rilevato, commuta automaticamente la modalità attiva, aggiornando la conversazione e applicando il system prompt specializzato corrispondente.
+  2. *Cornice Cromatica Distintiva per Modalità:* Ogni modalità possiede una palette colore univoca ed esclusiva:
+     - ⚖️ **Arbitro Regole:** Verde Smeraldo (`#10b981`)
+     - 📦 **Setup Rapido:** Arancione Fuoco (`#f97316`)
+     - ⏱️ **Spiega in 3 Min:** Blu Elettrico (`#3b82f6`)
+     - 📄 **Scheda Gioco:** Ciano Acqua (`#06b6d4`)
+     - 🎲 **Cosa Giochiamo?:** Viola Indaco (`#a855f7`)
+     - 💬 **Tavolo Libero:** Ambra Oro (`#f59e0b`)
+  3. *Applicazione Visiva della Cornice:*
+     - **Barra Superiore & Ambient Frame:** Riga d'accento luminosa da 3px con bagliore neon in cima all'area di gioco.
+     - **Header Mode Badge:** Il pulsante in alto a destra adotta bordo, sfondo e glow del colore attivo.
+     - **Bubble Messaggi Assistente:** Bordo sinistro accentuato (`border-l-4`) e contorno con glow abbinato alla modalità del messaggio.
+     - **Input Bar & Pulsante Invio:** Il contenitore di scrittura e il tasto freccia assumono il colore della modalità attiva.
+  4. *Test di Regressione (12/12 PASSED):* Inclusi Test 11 e 12 per convalidare lo switch automatico da Regole a Setup e viceversa.
+
 ---
 
-## 📊 Stato Avanzamento (Sprint 1, 2, 3, 4, 5 & 6 Completati)
+## 📊 Stato Avanzamento (Sprint 1, 2, 3, 4, 5, 6 & 7 Completati)
 - [x] Scaffolding Next.js 14 con TypeScript e Tailwind CSS
 - [x] Integrazione e test convalidato della chiave Google Gemini API
 - [x] Endpoint backend `/api/chat` con prompt specializzati e fallback
@@ -161,7 +179,9 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Import File (caricamento regolamenti PDF e immagini compresse)**
 - [x] **Sintesi Vocale (Text-to-Speech) con lettura automatica e verdetto rapido in 10-15s**
 - [x] **Citazione obbligatoria in coda con riferimento alla regola e manuale (📜 Riferimento: ...)**
-- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) estesa a 10 test con esito 10/10 PASSED**
+- [x] **Cambio automatico modalità da intento dell'utente (es. domanda di setup da regole)**
+- [x] **Cornice cromatica distintiva e palette colori dedicata per ciascuna delle 6 modalità**
+- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) estesa a 12 test con esito 12/12 PASSED**
 
 ---
 

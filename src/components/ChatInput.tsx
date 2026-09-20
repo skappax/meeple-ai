@@ -6,6 +6,7 @@ import { ArrowUp, Loader2, Gamepad2, X, Mic, MicOff, Camera, FileText } from 'lu
 import { ChatMode, Attachment } from '@/types/chat';
 import { processSelectedFile } from '@/lib/file-helper';
 import { isSpeechRecognitionSupported } from '@/lib/speech';
+import { MODE_CONFIGS } from '@/lib/mode-helper';
 
 interface SpeechRecognitionResultItem {
   transcript: string;
@@ -57,6 +58,7 @@ export function ChatInput({
   gameContext,
   setGameContext,
 }: ChatInputProps) {
+  const theme = MODE_CONFIGS[mode] || MODE_CONFIGS.general;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -276,11 +278,11 @@ export function ChatInput({
         onChange={handleFileChange}
       />
 
-      {/* Main Input Container */}
-      <div className={`relative rounded-2xl bg-[#161923] border shadow-xl transition-all ${
+      {/* Main Input Container with Mode Frame */}
+      <div className={`relative rounded-2xl bg-[#161923] border transition-all ${
         isListening
-          ? 'border-red-500/80 ring-2 ring-red-500/30'
-          : 'border-slate-700/80 focus-within:border-amber-500/60 focus-within:ring-1 focus-within:ring-amber-500/30'
+          ? 'border-red-500/80 ring-2 ring-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+          : `${theme.borderSubtle} focus-within:${theme.border} ${theme.glow} focus-within:ring-1`
       }`}>
         <textarea
           ref={textareaRef}
@@ -323,13 +325,16 @@ export function ChatInput({
             )}
           </button>
 
-          {/* Send Button */}
+          {/* Send Button with Dynamic Mode Color Accent */}
           <button
             onClick={handleSend}
             disabled={!canSend}
+            style={{
+              backgroundColor: canSend ? theme.accentHex : undefined,
+            }}
             className={`p-2 rounded-xl transition-all ${
               canSend
-                ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 active:scale-95'
+                ? `text-slate-950 shadow-md ${theme.glow} active:scale-95 brightness-100 hover:brightness-110`
                 : 'bg-slate-800/80 text-slate-500 cursor-not-allowed'
             }`}
             title="Invia messaggio"
