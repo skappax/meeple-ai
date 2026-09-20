@@ -189,13 +189,10 @@ async function main() {
             env: 'node',
             plan: 'free',
             region: 'frankfurt',
-            buildCommand: 'npm install && npm run build',
-            startCommand: 'npm run start',
-            envVars: [
-              { key: 'NODE_ENV', value: 'production' },
-              { key: 'GEMINI_API_KEY', value: geminiApiKey },
-              { key: 'GEMINI_MODEL', value: 'gemini-3.6-flash' }
-            ]
+            envSpecificDetails: {
+              buildCommand: 'npm install; npm run build',
+              startCommand: 'npm run start'
+            }
           }
         };
 
@@ -215,8 +212,34 @@ async function main() {
         }
 
         const newService = await createServiceRes.json();
-        const liveUrl = newService.serviceDetails?.url || `https://meeple-ai.onrender.com`;
-        console.log('✅ Web Service creato con successo su Render.com!');
+        const serviceId = newService.id || newService.service?.id;
+        const liveUrl = newService.serviceDetails?.url || newService.service?.serviceDetails?.url || `https://meeple-ai.onrender.com`;
+        console.log(`✅ Web Service creato con successo su Render.com (ID: ${serviceId})`);
+
+        // Aggiornamento variabili d'ambiente
+        console.log('   Configurazione variabili d\'ambiente (GEMINI_API_KEY, NODE_ENV)...');
+        const envVarsPayload = [
+          { key: 'NODE_ENV', value: 'production' },
+          { key: 'GEMINI_API_KEY', value: geminiApiKey },
+          { key: 'GEMINI_MODEL', value: 'gemini-3.6-flash' }
+        ];
+
+        const envVarsRes = await fetch(`https://api.render.com/v1/services/${serviceId}/env-vars`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${RENDER_API_KEY}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(envVarsPayload)
+        });
+
+        if (envVarsRes.ok) {
+          console.log('✅ Variabili d\'ambiente configurate con successo!');
+        } else {
+          console.warn(`⚠️ Avviso salvataggio env-vars: ${envVarsRes.status} ${await envVarsRes.text()}`);
+        }
+
         console.log(`🌐 URL Live: ${liveUrl}`);
       }
     } catch (renderErr) {
