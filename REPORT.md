@@ -75,6 +75,12 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   5. *Header & Chat Input Mobile-Friendly:* Prevenzione del bug di auto-zoom su Safari iOS (`text-base sm:text-sm`) e barra input pulita senza tasti ridondanti.
   6. *GameCard in Chat collassata di default:* Mostra una riga sintetica con le metriche principali per lasciare il 100% dello spazio di lettura ai chiarimenti sulle regole.
 
+### ADR 009 — Minimalist Home with Non-Clickable Examples
+- **Data:** 2026-09-20
+- **Decisione:** Massima semplificazione della Home page su richiesta utente per eliminare ogni distrazione visiva:
+  1. *Rimozione bottoni e giochi cliccabili:* Rimosse le scorciatoie/pulsanti cliccabili e il carosello dei giochi, lasciando piena centralità al campo di input.
+  2. *Esempi statici non cliccabili:* Inseriti in top page 4 esempi testuali (`pointer-events-none select-none`) che mostrano chiaramente all'utente le tipologie di richieste possibili (dubbio regole, spiegazione rapida, checklist setup, consiglio di gioco).
+
 ---
 
 ## 📊 Stato Avanzamento (Sprint 1 & 2 Completati)

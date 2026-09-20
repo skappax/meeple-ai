@@ -370,18 +370,7 @@ export default function Home() {
         {/* Chat / Messages Area */}
         <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-2 sm:py-6">
           {messages.length === 0 ? (
-            <PromptStarters
-              onSelectPrompt={(prompt, mode) => handleSendMessage(prompt, mode)}
-              onSelectGame={(game) => {
-                setGameContext(game);
-              }}
-              activeGame={gameContext}
-              gameInfo={gameInfo}
-              onClearGame={() => {
-                setGameContext('');
-                setGameInfo(null);
-              }}
-            />
+            <PromptStarters />
           ) : (
             <div className="max-w-3xl mx-auto">
               {messages.map((msg) => (
