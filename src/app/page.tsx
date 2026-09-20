@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Sparkles, Gamepad2, RotateCcw } from 'lucide-react';
-import { Sidebar } from '@/components/Sidebar';
+import { Sparkles, Gamepad2, RotateCcw, ChevronDown, Scale, Clock, FileText, Package, Dices } from 'lucide-react';
+import { Sidebar, MODES } from '@/components/Sidebar';
 import { ChatMessage } from '@/components/ChatMessage';
 import { PromptStarters } from '@/components/PromptStarters';
 import { ChatInput } from '@/components/ChatInput';
@@ -24,6 +24,7 @@ export default function Home() {
   const [activeModel, setActiveModel] = useState('gemini-3.6-flash');
   const [customApiKey, setCustomApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isModeDropdownOpen, setIsModeDropdownOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
@@ -325,15 +326,74 @@ export default function Home() {
               </button>
             )}
 
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/60 text-slate-300 text-[11px]">
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              <span className="font-medium capitalize text-[11px]">
-                {currentMode === 'general' && 'Libero'}
-                {currentMode === 'rules' && 'Arbitro'}
-                {currentMode === 'explain' && 'Spiega'}
-                {currentMode === 'recommend' && 'Consigli'}
-                {currentMode === 'setup' && 'Setup'}
-              </span>
+            {/* Interactive Mode Dropdown Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsModeDropdownOpen(!isModeDropdownOpen)}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-amber-500/40 text-slate-200 text-xs transition-all active:scale-95 cursor-pointer shadow-sm"
+                title="Tocca per cambiare modalità di gioco"
+              >
+                {currentMode === 'rules' && <Scale className="w-3.5 h-3.5 text-emerald-400" />}
+                {currentMode === 'explain' && <Clock className="w-3.5 h-3.5 text-blue-400" />}
+                {currentMode === 'summary' && <FileText className="w-3.5 h-3.5 text-cyan-400" />}
+                {currentMode === 'setup' && <Package className="w-3.5 h-3.5 text-orange-400" />}
+                {currentMode === 'recommend' && <Dices className="w-3.5 h-3.5 text-purple-400" />}
+                {currentMode === 'general' && <Sparkles className="w-3.5 h-3.5 text-amber-400" />}
+                
+                <span className="font-medium text-[11px] sm:text-xs">
+                  {currentMode === 'general' && 'Libero'}
+                  {currentMode === 'rules' && 'Arbitro'}
+                  {currentMode === 'explain' && 'Spiega 3m'}
+                  {currentMode === 'summary' && 'Scheda'}
+                  {currentMode === 'setup' && 'Setup'}
+                  {currentMode === 'recommend' && 'Consigli'}
+                </span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+
+              {isModeDropdownOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-30" 
+                    onClick={() => setIsModeDropdownOpen(false)} 
+                  />
+                  <div className="absolute right-0 top-9 w-52 py-1.5 bg-[#141722] border border-slate-700/90 rounded-xl shadow-2xl z-40 animate-in fade-in-0 zoom-in-95 duration-150">
+                    <div className="px-3 py-1 text-[10px] uppercase font-semibold tracking-wider text-slate-400 border-b border-slate-800 mb-1">
+                      Modalità MeepleAI
+                    </div>
+                    {MODES.map((m) => {
+                      const isSelected = currentMode === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          onClick={() => {
+                            setCurrentMode(m.id);
+                            if (activeId) {
+                              setConversations((prev) =>
+                                prev.map((c) => (c.id === activeId ? { ...c, mode: m.id } : c))
+                              );
+                            }
+                            setIsModeDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-3 py-1.5 text-xs transition-colors ${
+                            isSelected 
+                              ? 'bg-amber-500/15 text-amber-300 font-medium' 
+                              : 'text-slate-300 hover:bg-slate-800/60 hover:text-slate-100'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className={isSelected ? 'text-amber-400' : m.color}>{m.icon}</span>
+                            <span>{m.label}</span>
+                          </div>
+                          {isSelected && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </header>

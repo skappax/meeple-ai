@@ -102,6 +102,31 @@ async function main() {
     }
   })) passed++;
 
+  // Test 6: Summary / Game Sheet Mode (POST /api/chat mode=summary)
+  total++;
+  if (await runTest('Summary / Game Sheet Mode (POST /api/chat mode=summary)', async () => {
+    const payload = {
+      messages: [
+        { role: 'user', content: 'Dammi la scheda tecnica e le metriche BGG di Carcassonne.' }
+      ],
+      mode: 'summary',
+      gameContext: 'Carcassonne'
+    };
+    const res = await fetch(`${BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.status !== 200) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`HTTP ${res.status}: ${err.error || 'Unknown error'}`);
+    }
+    const data = await res.json();
+    if (!data.text || data.text.length < 50) {
+      throw new Error('Summary response text too short or empty');
+    }
+  })) passed++;
+
   console.log('\n----------------------------------------');
   console.log(`Results: ${passed}/${total} tests passed.`);
   console.log('----------------------------------------\n');

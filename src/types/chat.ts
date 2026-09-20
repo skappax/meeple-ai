@@ -1,6 +1,6 @@
 export type Role = 'user' | 'assistant' | 'system';
 
-export type ChatMode = 'general' | 'rules' | 'recommend' | 'setup' | 'explain';
+export type ChatMode = 'general' | 'rules' | 'recommend' | 'setup' | 'explain' | 'summary';
 
 export interface ChatMessage {
   id: string;

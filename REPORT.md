@@ -96,9 +96,17 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   1. *Colonna Icone Permanente (Icon Rail):* Sostituzione della sidebar ad apertura/chiusura con una colonna verticale fissa di sole icone (48px su mobile / 56px su desktop). Cambio modalità e nuova chat sono a portata di 1 tap immediato senza cassetti da dover chiudere. La cronologia si apre come pannello flyout solo quando richiesto.
   2. *Box Singolo con Esempi a Rotazione (10 Esempi):* Eliminazione delle card verticali ingombranti in favore di un unico box compatto da ~44px di altezza con timer automatico di scorrimento (4s), frecce manuali (`‹ ›`) e 10 esempi reali su più giochi (*Catan, Carcassonne, Wingspan, Terraforming Mars, Dune, Azul, 7 Wonders, Scythe*).
 
+### ADR 012 — 6ª Modalità ("Scheda Gioco"), Header Mode Selector Interattivo e Distinzione Logo vs Nuova Partita
+- **Data:** 2026-09-20
+- **Decisione:**
+  1. *6ª Modalità Specializzata (`summary` — Scheda Gioco):* Integrata a pieno titolo tra le modalità ufficiali (accanto ad Arbitro Regole, Spiega in 3 min, Setup Rapido, Consigli e Generale). Fornisce una scheda tecnica stile BGG con Rank, Peso/Complessità (1-5), Durata reale, Giocatori ideali community, Meccaniche chiave e sintesi in 3 righe.
+  2. *Header Mode Selector Interattivo:* Il badge della modalità attiva in alto a destra non è più solo una label statica, ma un dropdown touch interattivo che consente di cambiare modalità direttamente dall'header con feedback visivo e chiusura al tap esterno.
+  3. *Chiarimento Ergonomico Dado (`🎲`) vs Più (`+`):* Il dado in cima alla rail è ora l'identificativo visivo del brand MeepleAI, mentre il tasto `+` sottostante è l'unico punto di ingresso dedicato per iniziare una "Nuova partita / Nuova chat", eliminando ogni ambiguità d'uso.
+  4. *Aggiornamento Tagline Ufficiale:* Applicato il nuovo claim memorizzato: *"L'esperto dei giochi da tavolo sempre al tuo fianco"*.
+
 ---
 
-## 📊 Stato Avanzamento (Sprint 1 & 2 Completati)
+## 📊 Stato Avanzamento (Sprint 1, 2 & 3 Completati)
 - [x] Scaffolding Next.js 14 con TypeScript e Tailwind CSS
 - [x] Integrazione e test convalidato della chiave Google Gemini API
 - [x] Endpoint backend `/api/chat` con prompt specializzati e fallback
@@ -114,11 +122,15 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Semplificazione Mobile-First: Colonna Icone fissa (senza cassetti da chiudere)**
 - [x] **Box Singolo compatto con 10 Esempi a Scorrimento Automatico**
 - [x] **Integrazione Knowledge Base Regole Verificate (BGG & Manuali Ufficiali) con Protocollo Arbitro Imparziale**
+- [x] **6ª Modalità 'Scheda Gioco' con metriche BGG e sintesi**
+- [x] **Selettore Modalità interattivo nell'header in alto a destra**
+- [x] **Aggiornamento Tagline: "L'esperto dei giochi da tavolo sempre al tuo fianco"**
+- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) con 6 test di validazione**
 
 ---
 
 ## 🔮 Prossimi Passi (Roadmap)
-0. 📝 **Aggiornamento Tagline (da applicare alla prossima modifica):** Sostituire il sottotitolo *"L'arbitro dei giochi da tavolo sempre al tuo fianco al tavolo"* con *"L'esperto dei giochi da tavolo"* (richiesta utente memorizzata, non toccare il codice adesso).
 1. **Ricerca regole avanzata / Caricamento PDF:** Possibilità di caricare il PDF del regolamento di un gioco inedito o autoprodoto.
 2. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
 3. **Deploy su Render.com / Vercel:** Messa online con dominio pubblico gratuito.
+

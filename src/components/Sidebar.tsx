@@ -11,6 +11,7 @@ import {
   Clock, 
   Package, 
   Bot,
+  FileText,
   X
 } from 'lucide-react';
 import { Conversation, ChatMode } from '@/types/chat';
@@ -32,6 +33,7 @@ interface SidebarProps {
 export const MODES: { id: ChatMode; label: string; icon: React.ReactNode; desc: string; color: string }[] = [
   { id: 'rules', label: 'Arbitro Regole', icon: <Scale className="w-4 h-4" />, desc: 'Verdetti su casi limite', color: 'text-emerald-400' },
   { id: 'explain', label: 'Spiega in 3 Min', icon: <Clock className="w-4 h-4" />, desc: 'Riassunto per novizi', color: 'text-blue-400' },
+  { id: 'summary', label: 'Scheda Gioco', icon: <FileText className="w-4 h-4" />, desc: 'Metriche BGG e scheda riassuntiva', color: 'text-cyan-400' },
   { id: 'setup', label: 'Setup Rapido', icon: <Package className="w-4 h-4" />, desc: 'Checklist apparecchiatura', color: 'text-orange-400' },
   { id: 'recommend', label: 'Cosa Giochiamo?', icon: <Dices className="w-4 h-4" />, desc: 'Consigli per stasera', color: 'text-purple-400' },
   { id: 'general', label: 'Tavolo Libero', icon: <Bot className="w-4 h-4" />, desc: 'Chiacchierata & curiosità', color: 'text-amber-400' },
@@ -53,14 +55,13 @@ export function Sidebar({
     <>
       {/* Permanent Icon Column (Rail) - Compact 48px on mobile, 56px on desktop */}
       <aside className="w-12 sm:w-14 bg-[#12141c] border-r border-slate-800/80 flex flex-col items-center py-2.5 shrink-0 z-20 select-none">
-        {/* Top Brand Logo */}
-        <button 
-          onClick={() => onNewConversation('general')}
-          className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-sm shadow-md shadow-amber-500/20 cursor-pointer hover:scale-105 active:scale-95 transition-all mb-2"
-          title="MeepleAI - Nuova partita"
+        {/* Brand Logo Header */}
+        <div 
+          className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-sm shadow-md shadow-amber-500/20 mb-2 border border-amber-400/30 select-none"
+          title="MeepleAI"
         >
           🎲
-        </button>
+        </div>
 
         {/* Nuova Chat (+) Button */}
         <button

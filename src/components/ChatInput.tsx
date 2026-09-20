@@ -53,6 +53,8 @@ export function ChatInput({
         return 'Chiedi un dubbio sulle regole...';
       case 'explain':
         return 'Quale gioco vuoi che ti spieghi in 3 min?...';
+      case 'summary':
+        return 'Scrivi il nome di un gioco per la scheda tecnica BGG...';
       case 'recommend':
         return 'Quanti siete e cosa cercate stasera?...';
       case 'setup':

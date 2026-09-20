@@ -100,7 +100,7 @@ export function PromptStarters() {
           Meeple<span className="text-amber-400">AI</span>
         </h1>
         <p className="text-slate-400 text-xs mt-0.5">
-          L&apos;arbitro dei giochi da tavolo sempre al tuo fianco al tavolo
+          L&apos;esperto dei giochi da tavolo sempre al tuo fianco
         </p>
       </div>
 
