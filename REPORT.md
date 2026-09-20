@@ -50,6 +50,15 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - **Decisione:** Persistenza locale tramite `localStorage` (`meeple_ai_conversations`, `meeple_ai_settings`).
 - **Motivazione:** Zero necessità di login obbligatorio o complessità di database per la v1. Tutte le chat, titoli auto-generati e impostazioni rimangono nel browser del giocatore e persistono tra i riavvii della pagina.
 
+### ADR 006 — Mappatura Fonti Specializzate e Strategia Dati
+- **Data:** 2026-09-20
+- **Decisione:** Censire e strutturare le fonti di riferimento in `meeple-ai/SOURCES.md`, articolate in 4 livelli:
+  1. *Database & API Mondiali:* BoardGameGeek (BGG XML API2 per statistiche, peso, voto, player count community; Rules Forum per verdetti ufficiali degli autori).
+  2. *Fonti Italiane:* La Tana dei Goblin (regolamenti tradotti, player aid, forum dubbi regole), Gioconomicon, IoGioco.
+  3. *Repository Editoriali:* Cataloghi e sezioni Errata/FAQ ufficiali (Asmodee Italia, Cranio Creations, Giochi Uniti, DV Games, Stonemaier, Leder Games).
+  4. *Piattaforme di Sintesi & Codice:* The Esoteric Order of Gamers (schede di setup rapido), Board Game Arena (codice di gioco come prova del nove).
+- **Strategia Evolutiva:** Integrare le API pubbliche di BGG nel backend per auto-arricchire le risposte della chat con copertine e statistiche ufficiali.
+
 ---
 
 ## 📊 Stato Avanzamento (Sprint 1 Completato)
