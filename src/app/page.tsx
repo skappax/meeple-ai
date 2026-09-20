@@ -279,7 +279,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-[#0f1117] text-slate-100 overflow-hidden font-sans">
+    <div className="flex h-[100dvh] bg-[#0f1117] text-slate-100 overflow-hidden font-sans">
       {/* Sidebar */}
       <Sidebar
         conversations={conversations}
@@ -305,8 +305,8 @@ export default function Home() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#0d0f15]">
         {/* Top Navbar */}
-        <header className="h-14 border-b border-slate-800/80 px-4 flex items-center justify-between bg-[#12141c]/90 backdrop-blur-md z-10 shrink-0">
-          <div className="flex items-center gap-3">
+        <header className="h-12 border-b border-slate-800/80 px-3 sm:px-4 flex items-center justify-between bg-[#12141c]/90 backdrop-blur-md z-10 shrink-0">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsSidebarOpen(true)}
               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 lg:hidden"
@@ -315,7 +315,7 @@ export default function Home() {
             </button>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-slate-200">
+              <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate max-w-[160px] sm:max-w-none">
                 {activeConversation?.title || 'MeepleAI Chat'}
               </span>
               {gameContext && (
@@ -327,24 +327,24 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {messages.length > 0 && (
               <button
                 onClick={() => handleNewConversation(currentMode)}
-                className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 transition-colors"
-                title="Ricomincia chat"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 transition-colors"
+                title="Nuova chat"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Nuova chat</span>
+                <span className="hidden sm:inline">Nuova chat</span>
               </button>
             )}
 
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/60 text-slate-300 text-[11px]">
               <Sparkles className="w-3 h-3 text-amber-400" />
-              <span className="font-medium capitalize">
+              <span className="font-medium capitalize text-[11px]">
                 {currentMode === 'general' && 'Libero'}
                 {currentMode === 'rules' && 'Arbitro'}
-                {currentMode === 'explain' && 'Spiega 3 min'}
+                {currentMode === 'explain' && 'Spiega'}
                 {currentMode === 'recommend' && 'Consigli'}
                 {currentMode === 'setup' && 'Setup'}
               </span>
@@ -354,7 +354,7 @@ export default function Home() {
 
         {/* Active BGG Game Info Card */}
         {gameInfo && (
-          <div className="pt-3 pb-1 border-b border-slate-800/40 bg-[#10121a]/60">
+          <div className="pt-2 pb-0.5 border-b border-slate-800/40 bg-[#10121a]/60">
             <GameCard
               game={gameInfo}
               onClose={() => {
@@ -367,10 +367,13 @@ export default function Home() {
         )}
 
         {/* Chat / Messages Area */}
-        <div className="flex-1 overflow-y-auto px-4 py-6">
+        <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-3 sm:py-6">
           {messages.length === 0 ? (
             <PromptStarters
               onSelectPrompt={(prompt, mode) => handleSendMessage(prompt, mode)}
+              onSelectGame={(game) => {
+                setGameContext(game);
+              }}
             />
           ) : (
             <div className="max-w-3xl mx-auto">
