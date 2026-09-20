@@ -118,6 +118,7 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 ---
 
 ## 🔮 Prossimi Passi (Roadmap)
+0. 📝 **Aggiornamento Tagline (da applicare alla prossima modifica):** Sostituire il sottotitolo *"L'arbitro dei giochi da tavolo sempre al tuo fianco al tavolo"* con *"L'esperto dei giochi da tavolo"* (richiesta utente memorizzata, non toccare il codice adesso).
 1. **Ricerca regole avanzata / Caricamento PDF:** Possibilità di caricare il PDF del regolamento di un gioco inedito o autoprodoto.
 2. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
 3. **Deploy su Render.com / Vercel:** Messa online con dominio pubblico gratuito.
