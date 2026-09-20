@@ -65,6 +65,16 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   3. *In-memory Runtime Cache:* Ogni gioco cercato viene salvato in cache per risposte successive istantanee.
 - **Frontend GameCard Widget:** Componente espandibile a tema con barra visiva di complessità (peso 1-5), voto BGG, giocatori ideali secondo la community, durata, tag meccaniche e 4 pulsanti di azione immediata (*Dubbio Regole*, *Spiega in 3 min*, *Setup Rapido*, *Consigli & Strategie*).
 
+### ADR 008 — Mobile-First Home Simplification & Unified Table Experience
+- **Data:** 2026-09-20
+- **Decisione:** Riprogettazione radicale della Home per l'uso esclusivo e fluido da smartphone al tavolo da gioco:
+  1. *Zero Scrolling Necessario:* Tutto il layout iniziale (Logo compatto, selettore di gioco, 4 pulsanti di azione e input bar) rientra interamente nella schermata di qualsiasi smartphone (390px-844px) senza costringere a scorrere per trovare l'input.
+  2. *Selettore Gioco Immediato a 1 Tap:* Barra orizzontale di chip popolari con emoji (🌾 Catan, 🪶 Wingspan, 🏰 Carcassonne, 🚀 Terraforming Mars, 🪐 Dune, 🎨 Azul, 👽 Nemesis...) con ricerca integrata per qualsiasi altro gioco.
+  3. *Banner Contestuale Integrato:* Selezionando un gioco, appare un banner compatto con voto BGG, peso complessità, durata e giocatori, eliminando i widget duplicati che prima occupavano mezza schermata.
+  4. *Azioni Rapide Contestuali (Griglia 2x2):* I 4 pulsanti (Arbitro Regole, Spiega in 3 min, Setup Rapido, Consigli/Tattiche) si adattano dinamicamente al gioco attivo.
+  5. *Header & Chat Input Mobile-Friendly:* Prevenzione del bug di auto-zoom su Safari iOS (`text-base sm:text-sm`) e barra input pulita senza tasti ridondanti.
+  6. *GameCard in Chat collassata di default:* Mostra una riga sintetica con le metriche principali per lasciare il 100% dello spazio di lettura ai chiarimenti sulle regole.
+
 ---
 
 ## 📊 Stato Avanzamento (Sprint 1 & 2 Completati)
@@ -80,6 +90,7 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] Build di produzione (`npm run build`) validata senza errori
 - [x] Server di sviluppo attivo su porta `3000` (IP `192.168.1.174:3000`)
 - [x] Mappatura fonti specializzate in `SOURCES.md` e diario ADR in `REPORT.md`
+- [x] **Semplificazione Mobile-First della Home (zero scrolling, touch targets $\ge$ 44px, azioni contestuali)**
 
 ---
 

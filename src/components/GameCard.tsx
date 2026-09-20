@@ -21,10 +21,16 @@ interface GameCardProps {
   game: GameInfo;
   onClose: () => void;
   onTriggerPrompt: (prompt: string, mode: ChatMode) => void;
+  defaultExpanded?: boolean;
 }
 
-export function GameCard({ game, onClose, onTriggerPrompt }: GameCardProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+export function GameCard({ 
+  game, 
+  onClose, 
+  onTriggerPrompt, 
+  defaultExpanded = false 
+}: GameCardProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   const weight = game.bggWeight || 2.5;
 
@@ -36,39 +42,47 @@ export function GameCard({ game, onClose, onTriggerPrompt }: GameCardProps) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto w-full px-2 sm:px-4 mb-2 sm:mb-3">
-      <div className="bg-gradient-to-br from-[#181c28] to-[#12141c] border border-amber-500/30 rounded-xl sm:rounded-2xl shadow-lg overflow-hidden transition-all">
-        {/* Header Bar */}
-        <div className="px-3 py-2 sm:py-2.5 bg-slate-900/80 border-b border-slate-800/80 flex items-center justify-between">
+    <div className="max-w-3xl mx-auto w-full px-2 sm:px-4 mb-1 sm:mb-2">
+      <div className="bg-gradient-to-br from-[#181c28] to-[#12141c] border border-amber-500/30 rounded-xl shadow-md overflow-hidden transition-all">
+        {/* Header Bar - Compact & Informative */}
+        <div className="px-3 py-1.5 sm:py-2 bg-slate-900/80 border-b border-slate-800/80 flex items-center justify-between gap-2">
           <div 
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-2 truncate pr-2 cursor-pointer flex-1"
+            className="flex items-center gap-2 truncate cursor-pointer flex-1 min-w-0"
           >
-            <span className="text-base sm:text-lg">🎲</span>
-            <div className="truncate">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="font-bold text-slate-100 text-xs sm:text-sm truncate">{game.title}</span>
-                {game.year && (
-                  <span className="text-[10px] text-slate-400">({game.year})</span>
-                )}
-                {game.bggRank && (
-                  <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold bg-amber-500/15 border border-amber-500/30 text-amber-400 px-1 py-0.1 rounded">
-                    <Trophy className="w-2.5 h-2.5" /> #{game.bggRank}
-                  </span>
-                )}
-                <span className={`text-[9px] px-1.5 py-0.1 rounded border font-semibold ${getWeightColor(weight)}`}>
-                  {game.weightLabel || 'Medio'}
+            <span className="text-base shrink-0">🎲</span>
+            <div className="flex items-center gap-1.5 text-xs truncate">
+              <span className="font-bold text-slate-100 truncate">{game.title}</span>
+              {game.year && (
+                <span className="text-[10px] text-slate-400">({game.year})</span>
+              )}
+              {game.bggRating && (
+                <span className="text-amber-400 font-semibold text-[11px] flex items-center gap-0.5">
+                  <Star className="w-2.5 h-2.5 fill-amber-400" />
+                  {game.bggRating.toFixed(1)}
                 </span>
-              </div>
+              )}
+              <span className={`text-[9px] px-1.5 py-0.1 rounded border font-semibold ${getWeightColor(weight)}`}>
+                {game.weightLabel || 'Medio'}
+              </span>
+              {game.duration && (
+                <span className="text-slate-400 text-[10px] hidden sm:inline">⏱️ {game.duration}</span>
+              )}
+              {game.bggRank && (
+                <span className="hidden md:inline-flex items-center gap-0.5 text-[9px] font-semibold bg-amber-500/15 border border-amber-500/30 text-amber-400 px-1 py-0.1 rounded">
+                  <Trophy className="w-2.5 h-2.5" /> #{game.bggRank}
+                </span>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1 rounded text-slate-400 hover:text-slate-200"
-              title={isExpanded ? 'Comprimi' : 'Espandi'}
+              className="p-1 rounded text-slate-400 hover:text-slate-200 text-[10px] flex items-center gap-0.5"
+              title={isExpanded ? 'Riduci scheda' : 'Espandi dettagli'}
             >
+              <span className="hidden xs:inline">{isExpanded ? 'Riduci' : 'Dettagli'}</span>
               {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
             <button
@@ -84,7 +98,7 @@ export function GameCard({ game, onClose, onTriggerPrompt }: GameCardProps) {
         {/* Collapsible Body */}
         {isExpanded && (
           <div className="p-3 space-y-2.5 text-xs">
-            {/* 4 Stats Badges in compact 4-col/2-col */}
+            {/* 4 Stats Badges */}
             <div className="grid grid-cols-4 gap-1.5 text-center">
               <div className="p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
                 <div className="text-[9px] text-slate-400">Voto</div>
@@ -119,7 +133,7 @@ export function GameCard({ game, onClose, onTriggerPrompt }: GameCardProps) {
               </div>
             </div>
 
-            {/* Quick action buttons for mobile */}
+            {/* Quick action buttons */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-0.5">
               <button
                 onClick={() => onTriggerPrompt(`Quali sono le regole chiave e i casi limite più frequenti in ${game.title}?`, 'rules')}

@@ -352,9 +352,9 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Active BGG Game Info Card */}
-        {gameInfo && (
-          <div className="pt-2 pb-0.5 border-b border-slate-800/40 bg-[#10121a]/60">
+        {/* Active BGG Game Info Card - Only shown during active chat (home view has integrated game card) */}
+        {gameInfo && messages.length > 0 && (
+          <div className="pt-1 pb-0.5 border-b border-slate-800/40 bg-[#10121a]/60 shrink-0">
             <GameCard
               game={gameInfo}
               onClose={() => {
@@ -362,17 +362,24 @@ export default function Home() {
                 setGameInfo(null);
               }}
               onTriggerPrompt={(prompt, mode) => handleSendMessage(prompt, mode)}
+              defaultExpanded={false}
             />
           </div>
         )}
 
         {/* Chat / Messages Area */}
-        <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-3 sm:py-6">
+        <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-2 sm:py-6">
           {messages.length === 0 ? (
             <PromptStarters
               onSelectPrompt={(prompt, mode) => handleSendMessage(prompt, mode)}
               onSelectGame={(game) => {
                 setGameContext(game);
+              }}
+              activeGame={gameContext}
+              gameInfo={gameInfo}
+              onClearGame={() => {
+                setGameContext('');
+                setGameInfo(null);
               }}
             />
           ) : (
@@ -418,6 +425,7 @@ export default function Home() {
               );
             }
           }}
+          hideGameTag={messages.length === 0}
         />
       </div>
 
