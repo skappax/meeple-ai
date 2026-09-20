@@ -12,7 +12,6 @@ interface ChatInputProps {
   mode: ChatMode;
   gameContext: string;
   setGameContext: (game: string) => void;
-  hideGameTag?: boolean;
 }
 
 export function ChatInput({
@@ -23,10 +22,8 @@ export function ChatInput({
   mode,
   gameContext,
   setGameContext,
-  hideGameTag = false,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [showGameInput, setShowGameInput] = React.useState(false);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -66,57 +63,20 @@ export function ChatInput({
 
   return (
     <div className="max-w-3xl mx-auto w-full px-2.5 sm:px-4 pb-2 sm:pb-4 shrink-0">
-      {/* Game Context Bar / Tag (Shown if game is active, or if in chat mode and not hidden) */}
-      {(gameContext || (!hideGameTag && showGameInput) || !hideGameTag) && (
+      {/* Game Context Tag (Shown only when a game is actively selected) */}
+      {gameContext && (
         <div className="flex items-center gap-1.5 mb-1.5 px-0.5">
-          {gameContext ? (
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 font-medium">
-              <Gamepad2 className="w-3 h-3" />
-              <span>Gioco: <strong>{gameContext}</strong></span>
-              <button
-                onClick={() => setGameContext('')}
-                className="p-0.5 hover:bg-amber-500/20 rounded text-amber-300/80 hover:text-amber-200"
-                title="Rimuovi gioco"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          ) : showGameInput ? (
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-xl p-1 text-xs shadow-lg w-full sm:w-auto">
-              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-800 rounded-lg flex-1 sm:flex-initial">
-                <Gamepad2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Cerca gioco (es. Wingspan)..."
-                  className="bg-transparent border-none text-slate-100 text-xs focus:outline-none w-full sm:w-48 placeholder-slate-400"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const val = (e.target as HTMLInputElement).value.trim();
-                      if (val) setGameContext(val);
-                      setShowGameInput(false);
-                    } else if (e.key === 'Escape') {
-                      setShowGameInput(false);
-                    }
-                  }}
-                />
-              </div>
-              <button
-                onClick={() => setShowGameInput(false)}
-                className="p-1 rounded text-slate-400 hover:text-slate-200 shrink-0"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          ) : (
+          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 font-medium">
+            <Gamepad2 className="w-3 h-3" />
+            <span>Gioco: <strong>{gameContext}</strong></span>
             <button
-              onClick={() => setShowGameInput(true)}
-              className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-amber-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 px-2 py-0.5 rounded-lg transition-colors"
+              onClick={() => setGameContext('')}
+              className="p-0.5 hover:bg-amber-500/20 rounded text-amber-300/80 hover:text-amber-200"
+              title="Rimuovi gioco"
             >
-              <Gamepad2 className="w-3 h-3 text-amber-400" />
-              <span>+ Specifica Gioco</span>
+              <X className="w-3 h-3" />
             </button>
-          )}
+          </div>
         </div>
       )}
 

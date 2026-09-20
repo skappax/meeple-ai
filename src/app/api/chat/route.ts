@@ -13,6 +13,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (messages.length > 60) {
+      return NextResponse.json(
+        { error: 'Limite conversazione raggiunto (massimo 60 messaggi). Inizia una nuova partita.' },
+        { status: 400 }
+      );
+    }
+
+    const lastMsg = messages[messages.length - 1];
+    if (!lastMsg || typeof lastMsg.content !== 'string' || !lastMsg.content.trim()) {
+      return NextResponse.json(
+        { error: 'Il messaggio inviato non può essere vuoto.' },
+        { status: 400 }
+      );
+    }
+
+    if (lastMsg.content.length > 2000) {
+      return NextResponse.json(
+        { error: 'Il messaggio è troppo lungo (massimo 2000 caratteri).' },
+        { status: 400 }
+      );
+    }
+
     const result = await callGeminiChat({
       messages,
       mode,

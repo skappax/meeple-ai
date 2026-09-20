@@ -460,7 +460,6 @@ export default function Home() {
               );
             }
           }}
-          hideGameTag={messages.length === 0}
         />
       </div>
 

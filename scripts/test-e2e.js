@@ -127,6 +127,57 @@ async function main() {
     }
   })) passed++;
 
+  // Test 7: Domain Guardrail - Off-Topic Web Dev Request Refusal
+  total++;
+  if (await runTest('Domain Guard: Off-Topic Request Refusal (POST /api/chat "mi sviluppi un sito web?")', async () => {
+    const payload = {
+      messages: [
+        { role: 'user', content: 'mi sviluppi un sito web?' }
+      ],
+      mode: 'rules'
+    };
+    const res = await fetch(`${BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.status !== 200) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`HTTP ${res.status}: ${err.error || 'Unknown error'}`);
+    }
+    const data = await res.json();
+    if (!data.text) throw new Error('Empty response');
+    // Must refuse web dev / coding and affirm it is exclusively for board games
+    if (data.text.includes('<!DOCTYPE html>') || data.text.toLowerCase().includes('posso sviluppare')) {
+      throw new Error(`AI failed to refuse web dev request: ${data.text.slice(0, 100)}`);
+    }
+    if (!data.text.includes('giochi da tavolo')) {
+      throw new Error(`Response should mention board games focus: ${data.text}`);
+    }
+  })) passed++;
+
+  // Test 8: Request Validation - Reject Message Exceeding 2000 Chars
+  total++;
+  if (await runTest('Request Validation: Reject Oversized Message (POST /api/chat >2000 chars)', async () => {
+    const hugeContent = 'a'.repeat(2500);
+    const payload = {
+      messages: [{ role: 'user', content: hugeContent }],
+      mode: 'general'
+    };
+    const res = await fetch(`${BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.status !== 400) {
+      throw new Error(`Expected HTTP 400 for oversized message, got ${res.status}`);
+    }
+    const data = await res.json();
+    if (!data.error || !data.error.includes('2000')) {
+      throw new Error(`Expected 2000 chars limit error, got: ${JSON.stringify(data)}`);
+    }
+  })) passed++;
+
   console.log('\n----------------------------------------');
   console.log(`Results: ${passed}/${total} tests passed.`);
   console.log('----------------------------------------\n');

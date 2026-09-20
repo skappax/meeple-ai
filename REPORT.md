@@ -104,9 +104,18 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   3. *Chiarimento Ergonomico Dado (`🎲`) vs Più (`+`):* Il dado in cima alla rail è ora l'identificativo visivo del brand MeepleAI, mentre il tasto `+` sottostante è l'unico punto di ingresso dedicato per iniziare una "Nuova partita / Nuova chat", eliminando ogni ambiguità d'uso.
   4. *Aggiornamento Tagline Ufficiale:* Applicato il nuovo claim memorizzato: *"L'esperto dei giochi da tavolo sempre al tuo fianco"*.
 
+### ADR 013 — Guardrail di Dominio Ferreo (Esclusività Giochi da Tavolo), Limiti di Richiesta e Rimozione Popup 'Specifica Gioco'
+- **Data:** 2026-09-20
+- **Problema:** L'utente ha segnalato che chiedendo "mi sviluppi un sito web?" l'AI, trovandosi in modalità arbitro, ha risposto con "VERDETTO: SÌ..." fornendo codice HTML/JS completo, uscendo totalmente dal contesto di esperto di giochi da tavolo. Inoltre il pulsante con popup "+ Specifica Gioco" sopra la barra input risultava inutile ed ingombrante da mobile.
+- **Decisione:**
+  1. *Guardrail Assoluto di Dominio:* Istituito un vincolo insormontabile nei system prompt di Gemini e un interceptor deterministico a 0ms per query di sviluppo software, siti web e compiti generici. Se l'utente pone domande off-topic, MeepleAI rifiuta categoricamente con fermezza e simpatia, ricordando che è specializzato al 100% sui giochi da tavolo (niente codice, niente verdetti fittizi).
+  2. *Limitazione Richieste Backend (`/api/chat`):* Aggiunta validazione dei messaggi (lunghezza massima 2000 caratteri per prevenire attacchi di prompt injection ed esaurimento token; profondità massima conversazione di 60 messaggi).
+  3. *Rimozione Definitiva di '+ Specifica Gioco' e del Popup:* Eliminato il pulsante e il popup text-input sopra la barra chat; se un gioco è agganciato viene visualizzato unicamente il chip compatto con `[X]` per liberarlo, garantendo un'interfaccia 100% pulita e priva di ingombri per l'uso da smartphone.
+  4. *Test di Regressione (8/8 Passati):* Aggiunti Test 7 e Test 8 nella suite `scripts/test-e2e.js` per verificare il rifiuto categorico di richieste web dev e il rigetto di payload spropositati.
+
 ---
 
-## 📊 Stato Avanzamento (Sprint 1, 2 & 3 Completati)
+## 📊 Stato Avanzamento (Sprint 1, 2, 3 & 4 Completati)
 - [x] Scaffolding Next.js 14 con TypeScript e Tailwind CSS
 - [x] Integrazione e test convalidato della chiave Google Gemini API
 - [x] Endpoint backend `/api/chat` con prompt specializzati e fallback
@@ -125,7 +134,10 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **6ª Modalità 'Scheda Gioco' con metriche BGG e sintesi**
 - [x] **Selettore Modalità interattivo nell'header in alto a destra**
 - [x] **Aggiornamento Tagline: "L'esperto dei giochi da tavolo sempre al tuo fianco"**
-- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) con 6 test di validazione**
+- [x] **Guardrail di Dominio Ferreo (rifiuto categorico richieste non ludiche o sviluppo software)**
+- [x] **Limiti di sicurezza e validazione richieste (max 2000 caratteri per messaggio)**
+- [x] **Rimozione pulsante e popup inutile '+ Specifica Gioco' per massima pulizia mobile**
+- [x] **Test suite automatizzata end-to-end (`npm run test:flow`) estesa a 8 test di validazione con esito 8/8 PASSED**
 
 ---
 
