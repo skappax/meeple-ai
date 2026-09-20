@@ -81,6 +81,15 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   1. *Rimozione bottoni e giochi cliccabili:* Rimosse le scorciatoie/pulsanti cliccabili e il carosello dei giochi, lasciando piena centralità al campo di input.
   2. *Esempi statici non cliccabili:* Inseriti in top page 4 esempi testuali (`pointer-events-none select-none`) che mostrano chiaramente all'utente le tipologie di richieste possibili (dubbio regole, spiegazione rapida, checklist setup, consiglio di gioco).
 
+### ADR 010 — Verified Official Rules Knowledge Base & High-Precision Arbiter Protocol
+- **Data:** 2026-09-20
+- **Problema:** I modelli LLM non vincolati da grounding rischiavano di confondere casi limite complessi (es. la differenza tra costruire una strada attraverso una colonia nemica vs l'interruzione della strada più lunga in Catan).
+- **Decisione:**
+  1. *Base di Conoscenza Regole Verificate (`src/lib/rules-kb.ts`):* Mappatura dei casi limite e delle FAQ ufficiali (Almanacchi ufficiali, BGG Official Rules Forums, La Tana dei Goblin) per i titoli più giocati al mondo.
+  2. *Iniezione Automatica di Grounding:* Il backend analizza l'ultimo messaggio dell'utente e inietta istantaneamente le regole certificate dell'Almanacco nel contesto di sistema.
+  3. *Protocollo Ufficiale Arbitro:* Le risposte sulle regole iniziano obbligatoriamente con il verdetto perentorio (**🎯 VERDETTO: NO, non è consentito / SÌ, è consentito**) in prima riga per consultazione rapida da cellulare, seguito dalla regola ufficiale, dalla spiegazione dell'errore comune e da cosa fare subito al tavolo.
+  4. *Modello di Produzione & Cascata Multi-Tier:* Utilizzo di `gemini-flash-latest` (Gemini 3.8 con reasoning profondo) con catena automatica di fallback (`gemini-3.5-flash` -> `gemini-3.5-flash-lite`) per garantire zero interruzioni e quote elevate.
+
 ---
 
 ## 📊 Stato Avanzamento (Sprint 1 & 2 Completati)
@@ -96,7 +105,8 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] Build di produzione (`npm run build`) validata senza errori
 - [x] Server di sviluppo attivo su porta `3000` (IP `192.168.1.174:3000`)
 - [x] Mappatura fonti specializzate in `SOURCES.md` e diario ADR in `REPORT.md`
-- [x] **Semplificazione Mobile-First della Home (zero scrolling, touch targets $\ge$ 44px, azioni contestuali)**
+- [x] **Semplificazione Mobile-First della Home (zero scrolling, touch targets $\ge$ 44px, esempi statici non cliccabili)**
+- [x] **Integrazione Knowledge Base Regole Verificate (BGG & Manuali Ufficiali) con Protocollo Arbitro Imparziale**
 
 ---
 

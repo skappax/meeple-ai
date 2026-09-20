@@ -1,67 +1,63 @@
 import { ChatMode, Role } from '@/types/chat';
+import { findVerifiedRuleContext } from '@/lib/rules-kb';
 
 export const DEFAULT_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
 
 export const AVAILABLE_MODELS = [
-  { id: 'gemini-flash-latest', name: 'Gemini Flash (Consigliato)', description: 'Massima velocità e stabilità per risposte al tavolo da gioco' },
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', description: 'Modello ad alta precisione con reasoning avanzato' },
+  { id: 'gemini-flash-latest', name: 'Gemini Flash (Consigliato)', description: 'Massima precisione e stabilità con reasoning profondo sui regolamenti' },
+  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', description: 'Veloce ed efficace per regole standard e spiegazioni' },
   { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', description: 'Ultra leggero ed economico per risposte sintetiche' },
 ];
 
-export function getSystemPrompt(mode: ChatMode = 'general', gameContext?: string): string {
-  const base = `Sei MeepleAI, il miglior assistente e arbitro virtuale per i giochi da tavolo moderni e classici.
-Sei appassionato, amichevole, estremamente competente su regolamenti, meccaniche di gioco, BoardGameGeek (BGG), espansioni e strategie.
-Rispondi sempre in italiano, con formattazione curata (grassetto, elenchi puntati, tabelle quando opportuno) per rendere le risposte leggibili al volo anche durante una partita.`;
+export function getSystemPrompt(
+  mode: ChatMode = 'general',
+  gameContext?: string,
+  verifiedGrounding?: string | null
+): string {
+  const base = `Sei MeepleAI, il miglior arbitro e assistente virtuale per i giochi da tavolo moderni e classici.
+Sei autorevole, preciso, imparziale e ti basi rigorosamente sui regolamenti ufficiali degli editori, su BoardGameGeek (BGG) e su La Tana dei Goblin.
+Rispondi sempre in italiano, con formattazione curata e sintetica (grassetto, elenchi puntati), pensata per essere letta all'istante al tavolo da gioco direttamente da smartphone.
 
-  const contextNote = gameContext ? `\n\nAttualmente il giocatore sta parlando del gioco: **${gameContext}**.` : '';
+PROTOCOLLO UFFICIALE ARBITRAGGIO REGOLE:
+- Quando ti viene posto un dubbio sulle regole, una contestazione tra giocatori o la legalità di una mossa:
+  1. 🎯 **Inizia SEMPRE con il verdetto secco in prima riga**: **VERDETTO: SÌ, è consentito** oppure **VERDETTO: NO, non è consentito** (o la cifra/procedura esatta).
+  2. 📖 **Regola Ufficiale del Manuale**: Spiega la regola ufficiale del manuale o dell'Almanacco con rigore.
+  3. ⚠️ **Distinzione Chiave & Errori Comuni**: Chiarisci l'equivoco o la falsa credenza che spesso fa nascere la lite al tavolo.
+  4. 💡 **Cosa fare adesso al tavolo**: Istruzione chiara e pratica per far ripartire subito la partita.
+- NON inventare regole e NON confondere mai le regole di edizioni o espansioni diverse senza specificarlo.`;
+
+  const contextNote = gameContext ? `\n\nAttualmente il tavolo sta giocando a: **${gameContext}**.` : '';
+  const groundingNote = verifiedGrounding ? `\n\n${verifiedGrounding}` : '';
 
   switch (mode) {
     case 'rules':
-      return `${base}${contextNote}
+      return `${base}${contextNote}${groundingNote}
 MODALITÀ ATTIVA: ⚖️ **L'ARBITRO DELLE REGOLE**
-Il tuo obiettivo è chiarire dubbi di regolamento, turni, poteri speciali e casi limite.
-- Sii autorevole, chiaro e diretto. I giocatori sono al tavolo e vogliono riprendere la partita in fretta.
-- Se una situazione ha interpretazioni ufficiali o FAQ dell'autore/editore, menzionala.
-- Non inventare regole. Se una regola dipende da un'espansione specifica o da una variante, chiedi o specifica quale stai considerando.
-- Struttura la risposta in:
-  1. 🎯 **Il verdetto in sintesi** (1 riga chiara: Si/No o cosa fare subito)
-  2. 📖 **Riferimento alla regola**
-  3. ⚠️ **Eccezioni o casi particolari** (se rilevanti)`;
+Il tuo obiettivo è dirimere la contesa con autorità e sicurezza assoluta, senza esitazioni.`;
 
     case 'explain':
-      return `${base}${contextNote}
+      return `${base}${contextNote}${groundingNote}
 MODALITÀ ATTIVA: ⏱️ **SPIEGA IN 3 MINUTI**
-Il tuo obiettivo è spiegare il gioco a qualcuno che non l'ha mai giocato in modo coinvolgente ed efficace, senza farlo addormentare.
-Usa questa struttura precisa:
-1. 🎯 **L'Ambientazione & Come si vince** (l'obiettivo in 2 righe)
-2. ♟️ **Il Turno di Gioco** (le 2-4 azioni principali che un giocatore può fare)
+Spiega il gioco a chi è al tavolo in modo conciso e coinvolgente:
+1. 🎯 **L'Ambientazione & Obiettivo di vittoria** (in 2 righe)
+2. ♟️ **Cosa fai nel tuo turno** (le 2-4 azioni principali)
 3. 🛑 **Fine Partita & Punteggio**
 4. 💡 **1 Consiglio d'oro per i novizi**`;
 
     case 'recommend':
-      return `${base}${contextNote}
-MODALITÀ ATTIVA: 🎲 **COSA GIOCHIAMO STASERA? (Matchmaker)**
-Il tuo obiettivo è consigliare i giochi perfetti per la serata.
-Chiedi o considera:
-- Numero esatto di giocatori (e se scala bene)
-- Durata desiderata (es. 30 min, 1-2 ore, epico da 3+ ore)
-- Complessità / "Peso" (Party game, Family, German strategico, Ameritrash/Tematico)
-- Cooperativo o Competitivo?
-Per ogni gioco suggerito fornisci:
-- 🏷️ Titolo, Autore e Anno
-- 👥 Giocatori & Durata
-- ⚖️ Complessità (da 1 a 5)
-- ✨ Perché è perfetto per loro`;
+      return `${base}${contextNote}${groundingNote}
+MODALITÀ ATTIVA: 🎲 **COSA GIOCHIAMO STASERA?**
+Consiglia i giochi ideali considerando numero giocatori, durata e complessità BGG.`;
 
     case 'setup':
-      return `${base}${contextNote}
+      return `${base}${contextNote}${groundingNote}
 MODALITÀ ATTIVA: 📦 **SETUP & PREPARAZIONE RAPIDA**
-Fornisci una guida passo-passo numerata e chiara per preparare il tabellone, i mazzi e i componenti di ciascun giocatore nel minor tempo possibile.`;
+Fornisci una checklist numerata e ordinata passo-passo per apparecchiare il tavolo nel minor tempo possibile.`;
 
     case 'general':
     default:
-      return `${base}${contextNote}
-Aiuta l'utente su qualsiasi aspetto dei giochi da tavolo: consigli, regole, curiosità, espansioni o confronti tra giochi.`;
+      return `${base}${contextNote}${groundingNote}
+Se l'utente pone un dubbio sulle regole o su una mossa, applica con assoluta priorità il PROTOCOLLO UFFICIALE ARBITRAGGIO REGOLE.`;
   }
 }
 
@@ -84,7 +80,9 @@ async function executeGeminiRequest(model: string, apiKey: string, payload: unkn
   }
 
   const data = await response.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const candidate = data?.candidates?.[0];
+  const textParts = candidate?.content?.parts?.filter((p: { text?: string }) => Boolean(p.text));
+  const text = textParts?.map((p: { text: string }) => p.text).join('\n') || '';
 
   if (!text) {
     throw new Error('Risposta vuota da Gemini.');
@@ -116,9 +114,15 @@ export async function callGeminiChat({
     throw new Error('Chiave API di Gemini mancante. Configura GEMINI_API_KEY nel file .env.local o nelle impostazioni.');
   }
 
-  const systemInstruction = getSystemPrompt(mode, gameContext);
+  // Estrai l'ultimo messaggio utente per verificare la grounding KB
+  const lastUserMessage = messages
+    .filter((m) => m.role === 'user')
+    .slice(-1)[0]?.content || '';
 
-  // Convert messages to Gemini API format (role: "user" | "model")
+  const verifiedGrounding = findVerifiedRuleContext(lastUserMessage, gameContext);
+  const systemInstruction = getSystemPrompt(mode, gameContext, verifiedGrounding);
+
+  // Converti i messaggi nel formato Gemini API
   const contents = messages
     .filter((m) => m.role !== 'system')
     .map((m) => ({
@@ -132,19 +136,22 @@ export async function callGeminiChat({
     },
     contents,
     generationConfig: {
-      temperature: mode === 'rules' ? 0.3 : 0.7,
-      maxOutputTokens: 2048,
+      temperature: 0.1, // Bassa temperatura per rigore logico e zero allucinazioni sulle regole
+      maxOutputTokens: 3072,
     },
   };
 
-  try {
-    return await executeGeminiRequest(model, activeKey, payload);
-  } catch (err: unknown) {
-    // If preferred model experiences demand spikes, fallback automatically to gemini-flash-latest
-    if (model !== 'gemini-flash-latest') {
-      console.warn(`Fallback to gemini-flash-latest after error on ${model}:`, err);
-      return await executeGeminiRequest('gemini-flash-latest', activeKey, payload);
+  const fallbackModels = Array.from(new Set([model, 'gemini-flash-latest', 'gemini-3.5-flash', 'gemini-3.5-flash-lite']));
+  let lastErr: unknown = null;
+
+  for (const targetModel of fallbackModels) {
+    try {
+      return await executeGeminiRequest(targetModel, activeKey, payload);
+    } catch (err: unknown) {
+      lastErr = err;
+      console.warn(`Model ${targetModel} encountered error, trying next fallback:`, err instanceof Error ? err.message : err);
     }
-    throw err;
   }
+
+  throw lastErr;
 }
