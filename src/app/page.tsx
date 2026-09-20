@@ -6,8 +6,10 @@ import { Sidebar } from '@/components/Sidebar';
 import { ChatMessage } from '@/components/ChatMessage';
 import { PromptStarters } from '@/components/PromptStarters';
 import { ChatInput } from '@/components/ChatInput';
+import { GameCard } from '@/components/GameCard';
 import { SettingsModal } from '@/components/SettingsModal';
 import { Conversation, ChatMessage as ChatMessageType, ChatMode } from '@/types/chat';
+import { GameInfo } from '@/types/game';
 
 const STORAGE_KEY = 'meeple_ai_conversations';
 const SETTINGS_KEY = 'meeple_ai_settings';
@@ -25,7 +27,30 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
+  const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Fetch BGG Game Info when gameContext changes
+  useEffect(() => {
+    if (!gameContext.trim()) {
+      setGameInfo(null);
+      return;
+    }
+    let isMounted = true;
+    fetch(`/api/game-info?game=${encodeURIComponent(gameContext.trim())}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.success && data.game) {
+          setGameInfo(data.game);
+        }
+      })
+      .catch((err) => console.error('Failed to load game info:', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, [gameContext]);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -326,6 +351,20 @@ export default function Home() {
             </div>
           </div>
         </header>
+
+        {/* Active BGG Game Info Card */}
+        {gameInfo && (
+          <div className="pt-3 pb-1 border-b border-slate-800/40 bg-[#10121a]/60">
+            <GameCard
+              game={gameInfo}
+              onClose={() => {
+                setGameContext('');
+                setGameInfo(null);
+              }}
+              onTriggerPrompt={(prompt, mode) => handleSendMessage(prompt, mode)}
+            />
+          </div>
+        )}
 
         {/* Chat / Messages Area */}
         <div className="flex-1 overflow-y-auto px-4 py-6">

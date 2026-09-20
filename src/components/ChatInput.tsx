@@ -74,36 +74,56 @@ export function ChatInput({
             </button>
           </div>
         ) : showGameInput ? (
-          <div className="inline-flex items-center gap-1.5 bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs">
-            <Gamepad2 className="w-3.5 h-3.5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Es. Catan, Nemesis, Wingspan..."
-              className="bg-transparent border-none text-slate-200 text-xs focus:outline-none w-48"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  const val = (e.target as HTMLInputElement).value.trim();
-                  if (val) setGameContext(val);
-                  setShowGameInput(false);
-                } else if (e.key === 'Escape') {
-                  setShowGameInput(false);
-                }
-              }}
-              onBlur={(e) => {
-                const val = e.target.value.trim();
-                if (val) setGameContext(val);
-                setShowGameInput(false);
-              }}
-            />
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-xl p-2 text-xs shadow-lg animate-in fade-in">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-800 rounded-lg">
+              <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
+              <input
+                type="text"
+                placeholder="Scrivi nome gioco e premi Invio..."
+                className="bg-transparent border-none text-slate-100 text-xs focus:outline-none w-52 placeholder-slate-400"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const val = (e.target as HTMLInputElement).value.trim();
+                    if (val) setGameContext(val);
+                    setShowGameInput(false);
+                  } else if (e.key === 'Escape') {
+                    setShowGameInput(false);
+                  }
+                }}
+              />
+            </div>
+            {/* Quick popular board games */}
+            <div className="hidden sm:flex items-center gap-1 text-[11px] text-slate-400">
+              <span className="text-[10px] text-slate-400">Popolari:</span>
+              {['Catan', 'Wingspan', 'Carcassonne', 'Terraforming Mars', 'Dune: Imperium', 'Azul'].map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => {
+                    setGameContext(g);
+                    setShowGameInput(false);
+                  }}
+                  className="px-2 py-0.5 rounded bg-slate-800 hover:bg-amber-500/20 hover:text-amber-300 text-slate-300 transition-colors"
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowGameInput(false)}
+              className="p-1 rounded text-slate-400 hover:text-slate-200"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           </div>
         ) : (
           <button
             onClick={() => setShowGameInput(true)}
-            className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-amber-300 bg-slate-800/60 hover:bg-slate-800 px-2 py-1 rounded transition-colors"
+            className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-amber-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 px-2.5 py-1 rounded-lg transition-colors"
           >
-            <Gamepad2 className="w-3 h-3" />
-            <span>+ Specifica Gioco</span>
+            <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
+            <span>+ Specifica Gioco (Scheda BGG)</span>
           </button>
         )}
       </div>

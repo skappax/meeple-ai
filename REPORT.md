@@ -57,26 +57,33 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   2. *Fonti Italiane:* La Tana dei Goblin (regolamenti tradotti, player aid, forum dubbi regole), Gioconomicon, IoGioco.
   3. *Repository Editoriali:* Cataloghi e sezioni Errata/FAQ ufficiali (Asmodee Italia, Cranio Creations, Giochi Uniti, DV Games, Stonemaier, Leder Games).
   4. *Piattaforme di Sintesi & Codice:* The Esoteric Order of Gamers (schede di setup rapido), Board Game Arena (codice di gioco come prova del nove).
-- **Strategia Evolutiva:** Integrare le API pubbliche di BGG nel backend per auto-arricchire le risposte della chat con copertine e statistiche ufficiali.
+### ADR 007 — BGG Game Data Engine & GameCard Widget
+- **Data:** 2026-09-20
+- **Decisione:** Implementazione dell'endpoint `/api/game-info` con architettura a triplo livello:
+  1. *Database pre-seeding:* I 7 giochi più celebri (Catan, Wingspan, Carcassonne, Terraforming Mars, Dune: Imperium, Nemesis, Azul) rispondono istantaneamente in 0ms senza chiamate esterne.
+  2. *BGG Engine dinamico con AI Fallback Hierarchy:* Per qualunque altro gioco al mondo, il motore interroga la base di conoscenza BGG con catena di fallback `gemini-3.5-flash-lite` -> `gemini-flash-latest` -> `gemini-3.6-flash`.
+  3. *In-memory Runtime Cache:* Ogni gioco cercato viene salvato in cache per risposte successive istantanee.
+- **Frontend GameCard Widget:** Componente espandibile a tema con barra visiva di complessità (peso 1-5), voto BGG, giocatori ideali secondo la community, durata, tag meccaniche e 4 pulsanti di azione immediata (*Dubbio Regole*, *Spiega in 3 min*, *Setup Rapido*, *Consigli & Strategie*).
 
 ---
 
-## 📊 Stato Avanzamento (Sprint 1 Completato)
+## 📊 Stato Avanzamento (Sprint 1 & 2 Completati)
 - [x] Scaffolding Next.js 14 con TypeScript e Tailwind CSS
 - [x] Integrazione e test convalidato della chiave Google Gemini API
 - [x] Endpoint backend `/api/chat` con prompt specializzati e fallback
 - [x] Sidebar con cronologia conversazioni e cambio modalità
 - [x] Render Markdown con supporto tabelle ed elenchi
-- [x] Chip contestuale per agganciare un gioco specifico
+- [x] Chip contestuale per agganciare un gioco specifico con pillole popolari rapide
+- [x] Motore dati BoardGameGeek (`/api/game-info`) con cache in memoria
+- [x] Widget interattivo `GameCard` con metriche BGG e azioni a 1 click
 - [x] Modale impostazioni (modello e override chiave API)
 - [x] Build di produzione (`npm run build`) validata senza errori
 - [x] Server di sviluppo attivo su porta `3000` (IP `192.168.1.174:3000`)
-- [x] Test end-to-end con esito positivo su domanda di regolamento (Carcassonne)
+- [x] Mappatura fonti specializzate in `SOURCES.md` e diario ADR in `REPORT.md`
 
 ---
 
 ## 🔮 Prossimi Passi (Roadmap)
 1. **Ricerca regole avanzata / Caricamento PDF:** Possibilità di caricare il PDF del regolamento di un gioco inedito o autoprodoto.
-2. **Integrazione BGG (BoardGameGeek API):** Lettura automatica di statistiche, complessità e immagini copertina del gioco dal database mondiale di BoardGameGeek.
-3. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
-4. **Deploy su Render.com / Vercel:** Messa online con dominio pubblico gratuito.
+2. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
+3. **Deploy su Render.com / Vercel:** Messa online con dominio pubblico gratuito.
