@@ -110,12 +110,14 @@ export function findVerifiedRuleContext(query: string, gameContext?: string): st
         return `\n\n📌 **FONTE UFFICIALE PRE-VALIDATA (${faq.officialSource})**:
 Argomento: ${faq.ruleTopic}
 Verdetto ufficiale: ${faq.verdict}
-Spiegazione da manuale: ${faq.explanation}\n`;
+Spiegazione da manuale: ${faq.explanation}
+Riferimento esatto da citare obbligatoriamente in coda: 📜 **Riferimento:** *${faq.officialSource}, sezione "${faq.ruleTopic}"*\n`;
       } else if (!gameMatch && matchCount >= 3) {
         return `\n\n📌 **FONTE UFFICIALE PRE-VALIDATA (${faq.officialSource} - ${gameName.toUpperCase()})**:
 Argomento: ${faq.ruleTopic}
 Verdetto ufficiale: ${faq.verdict}
-Spiegazione da manuale: ${faq.explanation}\n`;
+Spiegazione da manuale: ${faq.explanation}
+Riferimento esatto da citare obbligatoriamente in coda: 📜 **Riferimento:** *${faq.officialSource} (${gameName.toUpperCase()}), sezione "${faq.ruleTopic}"*\n`;
       }
     }
   }

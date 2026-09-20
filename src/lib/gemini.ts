@@ -71,6 +71,9 @@ PROTOCOLLO UFFICIALE ARBITRAGGIO REGOLE (SOLO per contestazioni e dubbi su regol
   2. 📖 **Regola Ufficiale del Manuale**: Spiega la regola ufficiale del manuale o dell'Almanacco con rigore.
   3. ⚠️ **Distinzione Chiave & Errori Comuni**: Chiarisci l'equivoco o la falsa credenza che spesso fa nascere la lite al tavolo.
   4. 💡 **Cosa fare adesso al tavolo**: Istruzione chiara e pratica per far ripartire subito la partita.
+  5. 📜 **Riferimento alla Regola in Coda (OBBLIGATORIO)**: Concludi SEMPRE la risposta riportando in fondo, preceduta da una linea di separazione (---), la citazione precisa del manuale o della fonte (es:
+     ---
+     📜 **Riferimento:** *Manuale Ufficiale [Nome Gioco], Sezione "[Nome Paragrafo o Regola]"* (oppure *Almanacco Ufficiale, BGG Rules Forum FAQ o Errata Ufficiale*).
 - NON inventare regole e NON confondere mai le regole di edizioni o espansioni diverse senza specificarlo.
 
 📷 ANALISI FOTOGRAFICA E DOCUMENTI (MULTIMODALE):
@@ -88,6 +91,7 @@ PROTOCOLLO UFFICIALE ARBITRAGGIO REGOLE (SOLO per contestazioni e dubbi su regol
       return `${base}${contextNote}${groundingNote}
 MODALITÀ ATTIVA: ⚖️ **L'ARBITRO DELLE REGOLE**
 Il tuo obiettivo è dirimere contese e dubbi sui regolamenti dei giochi da tavolo con autorità e sicurezza assoluta.
+OBBLIGATORIO: Riporta sempre in coda alla risposta il riferimento al manuale o alla fonte della regola (punto 5 del protocollo).
 ATTENZIONE: Se la richiesta dell'utente NON riguarda le regole di un gioco da tavolo (es. programmazione, siti web, compiti, argomenti estranei), NON emettere un verdetto ma applica il rifiuto categorico previsto dal GUARDRAIL DI DOMINIO.`;
 
     case 'explain':
@@ -97,7 +101,8 @@ Spiega il gioco da tavolo a chi è al tavolo in modo conciso e coinvolgente:
 1. 🎯 **L'Ambientazione & Obiettivo di vittoria** (in 2 righe)
 2. ♟️ **Cosa fai nel tuo turno** (le 2-4 azioni principali)
 3. 🛑 **Fine Partita & Punteggio**
-4. 💡 **1 Consiglio d'oro per i novizi**`;
+4. 💡 **1 Consiglio d'oro per i novizi**
+In coda, riporta: --- \n📜 **Riferimento:** Regolamento Ufficiale [Nome Gioco]`;
 
     case 'summary':
       return `${base}${contextNote}${groundingNote}
@@ -109,22 +114,25 @@ Il tuo obiettivo è fornire una scheda tecnica completa, autorevole e strutturat
 - 👥 **Numero Giocatori (min-max e numero ideale/best consigliato)**
 - ⏱️ **Durata media reale della partita**
 - 🧩 **Meccaniche principali di gioco**
-- 📖 **Panoramica Ambientazione e Scopo in 3 righe**`;
+- 📖 **Panoramica Ambientazione e Scopo in 3 righe**
+In coda, riporta: --- \n📜 **Fonte Metriche:** BoardGameGeek (BGG Database)`;
 
     case 'recommend':
       return `${base}${contextNote}${groundingNote}
 MODALITÀ ATTIVA: 🎲 **COSA GIOCHIAMO STASERA?**
-Consiglia i giochi da tavolo ideali considerando numero giocatori, durata e complessità BGG.`;
+Consiglia i giochi da tavolo ideali considerando numero giocatori, durata e complessità BGG.
+In coda, riporta: --- \n📜 **Fonte Classifiche & Pesi:** BoardGameGeek (BGG)`;
 
     case 'setup':
       return `${base}${contextNote}${groundingNote}
 MODALITÀ ATTIVA: 📦 **SETUP & PREPARAZIONE RAPIDA**
-Fornisci una checklist numerata e ordinata passo-passo per apparecchiare il tavolo da gioco nel minor tempo possibile.`;
+Fornisci una checklist numerata e ordinata passo-passo per apparecchiare il tavolo da gioco nel minor tempo possibile.
+In coda, riporta: --- \n📜 **Riferimento:** Manuale di Gioco / Scheda Setup Ufficiale [Nome Gioco]`;
 
     case 'general':
     default:
       return `${base}${contextNote}${groundingNote}
-Se l'utente pone un dubbio sulle regole o su una mossa di un gioco da tavolo, applica con assoluta priorità il PROTOCOLLO UFFICIALE ARBITRAGGIO REGOLE. Rispetta rigorosamente il GUARDRAIL DI DOMINIO per qualsiasi richiesta fuori tema.`;
+Se l'utente pone un dubbio sulle regole o su una mossa di un gioco da tavolo, applica con assoluta priorità il PROTOCOLLO UFFICIALE ARBITRAGGIO REGOLE, includendo sempre in coda il riferimento alla regola (es. --- \n📜 **Riferimento:** ...). Rispetta rigorosamente il GUARDRAIL DI DOMINIO per qualsiasi richiesta fuori tema.`;
   }
 }
 

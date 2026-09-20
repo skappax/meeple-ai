@@ -124,9 +124,17 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   4. *Sintesi Vocale Intelligente (Text-to-Speech):* Tramite `window.speechSynthesis`, se la domanda è stata dettata con il microfono (o premendo il tasto "Ascolta" 🔊 sul messaggio), MeepleAI legge a voce alta il verdetto. L'algoritmo di estrazione estrae prioritariamente il **Verdetto secco e la Regola chiave** (sintesi di 10-15 secondi) per non interrompere il flusso della partita al tavolo.
   5. *Test Suite QA Estesa (10/10 PASSED):* Aggiunti test per l'elaborazione di payload visivi base64 e per la logica di estrazione del verdetto audio senza sintassi markdown.
 
+### ADR 015 — Citazione Obbligatoria del Riferimento alla Regola / Fonte in Coda alle Risposte
+- **Data:** 2026-09-20
+- **Decisione:** Su richiesta dell'utente, l'assistente ora include obbligatoriamente in coda (footer) a ciascuna risposta una citazione chiara, elegante ed autorevole della fonte o del regolamento ufficiale:
+  1. *Protocollo Arbitro:* Punto 5 integrato nel protocollo di arbitraggio: concluso con una riga orizzontale (`---`) seguita dall'icona pergamena `📜 **Riferimento:** *[Manuale Ufficiale Gioco, Sezione/Paragrafo, pag. X / Almanacco FAQ / BGG Rules Forum]*`.
+  2. *Grounding KB:* La base di conoscenza regole convalidate inietta la citazione esatta da riportare in coda per le regole pre-censite.
+  3. *In tutte le modalità:* Anche in Spiegazione (Manuale Ufficiale), Setup (Scheda di Preparazione) e Scheda Tecnica (Fonte Metriche: BoardGameGeek) viene apposta la citazione in calce.
+  4. *TTS Audio Isolation:* L'algoritmo di sintesi vocale (`extractSpokenSummary`) esclude la citazione in coda dalla lettura a voce alta, garantendo che l'audio resti rapido e focalizzato sul solo verdetto secco (10-15s), mentre la citazione rimane consultabile visivamente sullo schermo.
+
 ---
 
-## 📊 Stato Avanzamento (Sprint 1, 2, 3, 4 & 5 Completati)
+## 📊 Stato Avanzamento (Sprint 1, 2, 3, 4, 5 & 6 Completati)
 - [x] Scaffolding Next.js 14 con TypeScript e Tailwind CSS
 - [x] Integrazione e test convalidato della chiave Google Gemini API
 - [x] Endpoint backend `/api/chat` con prompt specializzati e fallback
@@ -152,6 +160,7 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Fotocamera e Visione Gemini (analisi fotografica del tabellone e carte)**
 - [x] **Import File (caricamento regolamenti PDF e immagini compresse)**
 - [x] **Sintesi Vocale (Text-to-Speech) con lettura automatica e verdetto rapido in 10-15s**
+- [x] **Citazione obbligatoria in coda con riferimento alla regola e manuale (📜 Riferimento: ...)**
 - [x] **Test suite automatizzata end-to-end (`npm run test:flow`) estesa a 10 test con esito 10/10 PASSED**
 
 ---

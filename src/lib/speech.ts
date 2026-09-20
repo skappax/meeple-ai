@@ -32,9 +32,9 @@ export function extractSpokenSummary(markdown: string): string {
     clean = clean.substring(verdictIndex);
   }
 
-  // Taglia prima di sezioni secondarie come 'Distinzione Chiave', 'Cosa fare adesso', 'Consiglio'
+  // Taglia prima di sezioni secondarie come 'Distinzione Chiave', 'Cosa fare adesso', 'Consiglio' o riferimenti in coda
   const stopKeywords = [
-    '⚠️', 'Distinzione', 'DISTINZIONE', '💡', 'Cosa fare adesso', 'COSA FARE', 'Regola Ufficiale del Manuale:'
+    '⚠️', 'Distinzione', 'DISTINZIONE', '💡', 'Cosa fare adesso', 'COSA FARE', 'Regola Ufficiale del Manuale:', '📜', 'Riferimento', 'RIFERIMENTO', '---'
   ];
 
   let cutoff = clean.length;
