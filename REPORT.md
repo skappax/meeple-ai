@@ -191,9 +191,17 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Preparazione al Deploy: Blueprint render.yaml e guida passo-passo RENDER_DEPLOY.md**
 - [x] **Configurazione di sicurezza .gitignore per file .env e chiavi API**
 - [x] **Script di pubblicazione autonoma via REST API (`scripts/publish-api.js`)**
-- [x] **Pubblicazione Repository GitHub: `https://github.com/skappax/meeple-ai`**
 - [x] **Deploy Live Operativo su Render.com: `https://meeple-ai.onrender.com` con HTTPS e Google Gemini integrato**
 - [x] **Skill Antigravity aggiornate per GitHub & Render.com (REST API native)**
+- [x] **Sprint 9: Semplificazione Sessione Effimera, Tasto "Pulisci Chat" e Barra Game Tools da Tavolo**
+  - [x] Rimozione storico chat pesante da LocalStorage (la chat scompare al refresh o su richiesta)
+  - [x] Spostamento pulsante "Pulisci" (Clear) e selettore modalità in alto a destra nell'header
+  - [x] Trasformazione della barra laterale in "Game Tools" da tavolo:
+    - [x] ⏱️ **Timer Turno & Clessidra** (preset 30s-180s, anello di progresso SVG, rintocco Web Audio)
+    - [x] 🎲 **Lancia Dadi Virtuale** (D6, 2D6, D10, D20, D100, animazione rotolamento e storico)
+    - [x] 👑 **Chi Inizia? / Primo Giocatore** (selettore casuale meeple per 2-8 giocatori)
+    - [x] 🧮 **Segnapunti Rapido** (contatore PV / vite / monete con tasti rapidi +/- per giocatore)
+  - [x] Settings accessibili in basso alla barra strumenti
 
 ---
 
@@ -206,6 +214,21 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   3. Modificato il build command in `npm install --include=dev; npm run build` in `render.yaml` e nel payload API.
   4. Sviluppato `scripts/publish-api.js` per gestire l'intero ciclo CI/CD (GitHub API repo creation + push + Render API Web Service creation & env injection) in totale autonomia.
   5. Risultato: Servizio live al 100% su `https://meeple-ai.onrender.com` con test di inferenza Gemini superato.
+
+---
+
+### ADR 018 — Semplificazione Sessione Effimera e Barra Game Tools da Tavolo
+- **Data:** 2026-09-21
+- **Contesto:** Al tavolo da gioco, gli utenti non consultano un archivio storico di conversazioni passate, ma utilizzano MeepleAI come strumento estemporaneo per la sessione corrente. Il mantenimento di conversazioni multiple e cassetti cronologia generava confusione su schermi smartphone. Inoltre, la duplicazione delle modalità di gioco sia nella barra laterale che nell'header era ridondante.
+- **Decisione:**
+  1. **Sessione Effimera:** La chat corrente non accumula vecchie sessioni nel browser. Viene azzerata al ricaricamento della pagina o tramite il nuovo tasto compatto **"Pulisci"** posizionato nell'header in alto a destra. Le impostazioni utente (modello AI e API key) rimangono invece persistenti.
+  2. **Header Unificato:** Raggruppati in alto a destra il pulsante di pulizia rapida e il selettore colorato della modalità di risposta attiva.
+  3. **Barra Game Tools:** La colonna laterale sinistra è stata convertita in una barra di utilità fisica per il tavolo:
+     - **Timer Turno & Clessidra:** Per evitare l'Analysis Paralysis, con rintocchi sonori generati nativamente via Web Audio API (senza file mp3 esterni).
+     - **Lancia Dadi:** Rulli D6, 2D6, D20 con calcolo automatico della somma.
+     - **Primo Giocatore:** Randomizer visivo per 2-8 giocatori.
+     - **Segnapunti Rapido:** Contatore di punti vittoria, monete o salute per i giocatori al tavolo.
+- **Risultato:** UI mobile-first pulitissima, priva di elementi ridondanti, reattiva a 60fps e con tutti gli strumenti essenziali a portata di tocco.
 
 ---
 
