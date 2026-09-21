@@ -167,15 +167,35 @@ async function main() {
       if (existingService) {
         const s = existingService.service;
         console.log(`ℹ️ Servizio Render già presente: ${s.name} (${s.serviceDetails?.url || 'in deploy'})`);
+        console.log('   Aggiornamento configurazione build command su Render...');
+        await fetch(`https://api.render.com/v1/services/${s.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${RENDER_API_KEY}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            serviceDetails: {
+              envSpecificDetails: {
+                buildCommand: 'npm install --include=dev; npm run build',
+                startCommand: 'npm run start'
+              }
+            }
+          })
+        });
+
         console.log(`   Triggering deploy su servizio esistente...`);
-        await fetch(`https://api.render.com/v1/services/${s.id}/deploys`, {
+        const depRes = await fetch(`https://api.render.com/v1/services/${s.id}/deploys`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${RENDER_API_KEY}`,
             'Accept': 'application/json'
           }
         });
-        console.log(`✅ Deploy riavviato su Render: ${s.serviceDetails?.url}`);
+        const depJson = await depRes.json();
+        console.log(`✅ Nuovo deploy avviato su Render (Deploy ID: ${depJson.id || 'ok'})!`);
+        console.log(`🌐 URL Live: ${s.serviceDetails?.url || 'https://meeple-ai.onrender.com'}`);
       } else {
         console.log('   Creazione nuovo Web Service Node.js su Render...');
         const payload = {
