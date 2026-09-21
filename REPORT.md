@@ -8,8 +8,10 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - **Nome Progetto:** MeepleAI (directory `meeple-ai`)
 - **Data Inizio:** 2026-09-20
 - **Obiettivo:** Creare un assistente AI specializzato nei giochi da tavolo (arbitro delle regole, spiegazione rapida, raccomandazioni e setup) con interfaccia stile ChatGPT basata su Google Gemini.
-- **Server:** Proxmox-Server (LXC container 102, IP `192.168.1.174`)
-- **Porta:** `3000` (Accessibile via `http://192.168.1.174:3000` o `http://localhost:3000`)
+- **🌐 Live su Render.com:** `https://meeple-ai.onrender.com`
+- **📦 Repository GitHub:** `https://github.com/skappax/meeple-ai`
+- **🖥️ Server Locale (LXC 102):** `http://192.168.1.174:3000` (o `http://localhost:3000`)
+- **Gestione Servizio:** `systemctl restart meeple-ai`
 
 ---
 
@@ -207,8 +209,13 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   - [x] Timer da Tavolo evoluto: identificazione del giocatore di turno con il suo colore, tempo accumulato e grande pulsante "Passa Turno" che avanza al giocatore successivo
   - [x] Vassoio dadi componibile (Dice Pool Builder): composizione libera di dadi multipli (es. 3D6 + 1D20 + 1D3), preset rapidi, modificatore bonus/malus e breakdown dei singoli tiri
   - [x] Segnapunti potenziato con input rapido per sommare o sottrarre qualsiasi numero custom (+/- N)
-
----
+- [x] **Sprint 11: Riprogettazione Radicale, Roster Giocatori Globale Unificato, Palette Dark-Mode ad Alto Contrasto, Dadi 1D6 Standard e Custom Score**
+  - [x] Roster Globale Unificato (2-8 giocatori): impostare giocatori, nomi e colori in qualsiasi tool (Chi Inizia, Segnapunti o Timer) si riflette istantaneamente e simultaneamente in tutti gli altri tool
+  - [x] Selettore Numero Giocatori Immediato: barra rapida `[ 2 ] [ 3 ] [ 4 ] [ 5 ] [ 6 ] [ 7 ] [ 8 ]` presente e accessibile subito in testa a Chi Inizia, Segnapunti e Timer
+  - [x] Palette Colori ad Alto Contrasto per Dark Mode: sostituzione del colore scuro invisibile con il classico Meeple Legno (`#854d0e`), bianco puro delineato (`#ffffff`) ed esplicitazione cromatica con nomi e ring anti-svanimento
+  - [x] Preset Standard 1D6 per i Dadi: avvio predefinito con singolo 1D6, preset rapidi (1D6, 2D6, 3D6, 1D20, D100) e composizione libera e pulita di dadi multipli
+  - [x] Segnapunti con Input Somma Personalizzata: aggiunta o sottrazione rapida di qualsiasi numero custom (+/- N), pulsanti +/- rapidi e icona leader con trofeo 🏆
+  - [x] Timer Turno con Passa Turno ergonomico, suoni sintetizzati via Web Audio API e sincronizzazione automatica del primo giocatore estratto da Chi Inizia
 
 ### ADR 017 — Deploy Autonomo via API e Risoluzione Caching/Aliases su Render
 - **Data:** 2026-09-21
@@ -247,6 +254,23 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
   4. **Custom Dice Tray:** Vassoio libero componibile con D3, D4, D6, D8, D10, D12, D20, D100, moltiplicatori, modificatore +/- e calcolo automatico della somma.
   5. **Custom Score Input:** Modulo con tasti rapidi (+/- N) per inserire incrementi personalizzati (es. +23, -15).
 - **Risultato:** Strumenti da tavolo professionali, 100% persistenti, integrati perfettamente con l'arbitro AI.
+
+---
+
+### ADR 020 — Roster Globale Unificato, Palette Dark-Mode ad Alto Contrasto e Semplificazione Ergonomica dei Tool da Tavolo
+- **Data:** 2026-09-21
+- **Contesto:** Il feedback d'uso sul campo ha evidenziato diverse frizioni ergonomiche:
+  1. I tool risultavano concettualmente separati: impostare nomi o colori in un tool non si rifletteva negli altri.
+  2. Nel tool "Chi Inizia" mancava un selettore diretto per il numero di giocatori (`[2]-[8]`), costringendo a cercare altrove.
+  3. Nel tema scuro (`#141722`), i colori del color picker a tonalità scura (es. slate/nero) si mimetizzavano con lo sfondo risultando invisibili.
+  4. Il vassoio dadi conteneva 2D6 di default invece del classico 1D6 standard.
+- **Decisione:**
+  1. **Single Source of Truth per i Giocatori:** Lo store centralizzato `src/lib/tabletop-store.ts` gestisce il roster condiviso con funzioni atomiche (`setPlayerCount`, `updatePlayerName`, `updatePlayerColor`, `updatePlayerScore`). Qualsiasi variazione al tavolo (da 2 a 8 giocatori) si sincronizza all'istante tra Chi Inizia, Segnapunti e Timer.
+  2. **PlayerCountBar Immediata:** Integrata in cima a tutti i tool con bottoni compatti `[ 2 ] [ 3 ] [ 4 ] [ 5 ] [ 6 ] [ 7 ] [ 8 ]`.
+  3. **Palette Dark-Mode ad Alto Contrasto:** Sostituito il nero con il legno da tavolo (`#854d0e`), bianco puro con anello (`#ffffff`), color dots da 28px con rendering `hex` inline (immune a purge CSS), etichette con nome del colore e ring di selezione bianco brillante.
+  4. **Dadi 1D6 Standard & Multi-Pool Builder:** Default rigoroso a 1D6, preset rapidi (1D6, 2D6, 3D6, 1D20, D100), tasto "Ripristina 1D6" e pulsanti dadi multipli (+D3, +D4, +D6, +D8, +D10, +D12, +D20, +D100).
+  5. **Segnapunti con Somma Personalizzata:** Box per inserire qualsiasi valore numerico arbitrario (es. `+23`, `-15`) con pulsanti `+ Aggiungi` e `- Sottrai` e icona trofeo per il capolista.
+- **Risultato:** Interfaccia estremamente immediata, zero passaggi arzigogolati, massima leggibilità su schermi OLED/dark mode e perfetta rispondenza all'esperienza fisica al tavolo da gioco.
 
 ---
 
