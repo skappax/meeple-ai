@@ -201,7 +201,12 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
     - [x] 🎲 **Lancia Dadi Virtuale** (D6, 2D6, D10, D20, D100, animazione rotolamento e storico)
     - [x] 👑 **Chi Inizia? / Primo Giocatore** (selettore casuale meeple per 2-8 giocatori)
     - [x] 🧮 **Segnapunti Rapido** (contatore PV / vite / monete con tasti rapidi +/- per giocatore)
-  - [x] Settings accessibili in basso alla barra strumenti
+- [x] **Sprint 10: Persistenza Globale Tabletop Tools, Selezione Colori, Timer Passa-Turno, Custom Dice Pool Builder e Somma Punti Custom**
+  - [x] Salvataggio automatico persistente in `localStorage` (`meeple_ai_tabletop_tools_v2`): impostazioni, giocatori, colori e riserve dadi sopravvivono alla chiusura del modale e al refresh
+  - [x] Color Picker Popover con palette di 10 colori ufficiali da tavolo (Rosso, Blu, Verde, Giallo, Viola, Arancione, Ciano, Rosa, Bianco, Nero)
+  - [x] Timer da Tavolo evoluto: identificazione del giocatore di turno con il suo colore, tempo accumulato e grande pulsante "Passa Turno" che avanza al giocatore successivo
+  - [x] Vassoio dadi componibile (Dice Pool Builder): composizione libera di dadi multipli (es. 3D6 + 1D20 + 1D3), preset rapidi, modificatore bonus/malus e breakdown dei singoli tiri
+  - [x] Segnapunti potenziato con input rapido per sommare o sottrarre qualsiasi numero custom (+/- N)
 
 ---
 
@@ -229,6 +234,19 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
      - **Primo Giocatore:** Randomizer visivo per 2-8 giocatori.
      - **Segnapunti Rapido:** Contatore di punti vittoria, monete o salute per i giocatori al tavolo.
 - **Risultato:** UI mobile-first pulitissima, priva di elementi ridondanti, reattiva a 60fps e con tutti gli strumenti essenziali a portata di tocco.
+
+---
+
+### ADR 019 — Persistenza Globale Tabletop Tools & Strumenti da Tavolo Avanzati
+- **Data:** 2026-09-21
+- **Contesto:** I giocatori necessitavano che i dati dei tool (nomi, colori scelti, punteggi accumulati, timer e riserve di dadi) sopravvivessero sia alla chiusura del popup sia al refresh della pagina, senza disperdere il flusso della partita. Inoltre il timer doveva rispecchiare i veri board game timer con il concetto di "Passa Turno" per giocatore, il lancia-dadi doveva consentire combinazioni libere (es. 3D6 + 1D20 + 1D3), e il segnapunti doveva consentire l'aggiunta di valori numerici arbitrari.
+- **Decisione:**
+  1. **Store Persistente Dedicato (`src/lib/tabletop-store.ts`):** Centralizzato il modello dati dei giocatori, del timer, dei dadi e del selettore del primo giocatore con auto-salvataggio e ripristino istantaneo in `localStorage`.
+  2. **Palette 10 Colori:** Popover universale per selezionare i colori dei componenti fisici del gioco per ciascun giocatore.
+  3. **Timer con Passa-Turno:** Visualizzazione del giocatore attivo colorato, calcolo del tempo consumato individuale e pulsante `Passa Turno` rapido.
+  4. **Custom Dice Tray:** Vassoio libero componibile con D3, D4, D6, D8, D10, D12, D20, D100, moltiplicatori, modificatore +/- e calcolo automatico della somma.
+  5. **Custom Score Input:** Modulo con tasti rapidi (+/- N) per inserire incrementi personalizzati (es. +23, -15).
+- **Risultato:** Strumenti da tavolo professionali, 100% persistenti, integrati perfettamente con l'arbitro AI.
 
 ---
 
