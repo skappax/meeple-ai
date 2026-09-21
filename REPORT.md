@@ -181,14 +181,27 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Citazione obbligatoria in coda con riferimento alla regola e manuale (📜 Riferimento: ...)**
 - [x] **Cambio automatico modalità da intento dell'utente (es. domanda di setup da regole)**
 - [x] **Cornice cromatica distintiva e palette colori dedicata per ciascuna delle 6 modalità**
-- [x] **Preparazione al Deploy: Blueprint render.yaml e guida passo-passo RENDER_DEPLOY.md**
-- [x] **Configurazione di sicurezza .gitignore per file .env e chiavi API**
+- [x] **Pubblicazione Repository GitHub: `https://github.com/skappax/meeple-ai`**
+- [x] **Deploy Live Operativo su Render.com: `https://meeple-ai.onrender.com` con HTTPS e Google Gemini integrato**
+- [x] **Skill Antigravity aggiornate per GitHub & Render.com (REST API native)**
+
+---
+
+### ADR 017 — Deploy Autonomo via API e Risoluzione Caching/Aliases su Render
+- **Data:** 2026-09-21
+- **Contesto:** Il primo build su Render.com è fallito con `Module not found: Can't resolve '@/components/...'`. L'analisi dei log ha rivelato che Render applica `NODE_ENV=production` prima dell'installazione delle dipendenze, causando l'omissione di `devDependencies` (tra cui `typescript` e `tailwindcss`). Inoltre `tsconfig.json` era privo di `"baseUrl": "."`.
+- **Decisione:**
+  1. Aggiunto `"baseUrl": "."` a `tsconfig.json` per garantire una risoluzione deterministica degli alias path (`@/*`) su qualsiasi compilatore webpack/tsc.
+  2. Spostate le dipendenze di compilazione essenziali (`typescript`, `@types/node`, `@types/react`, `@types/react-dom`, `postcss`, `tailwindcss`) in `dependencies`.
+  3. Modificato il build command in `npm install --include=dev; npm run build` in `render.yaml` e nel payload API.
+  4. Sviluppato `scripts/publish-api.js` per gestire l'intero ciclo CI/CD (GitHub API repo creation + push + Render API Web Service creation & env injection) in totale autonomia.
+  5. Risultato: Servizio live al 100% su `https://meeple-ai.onrender.com` con test di inferenza Gemini superato.
 
 ---
 
 ## 🔮 Prossimi Passi (Roadmap)
-1. **Pubblicazione Repository GitHub (`skappax/meeple-ai`) e Deploy su Render.com**
-2. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
+1. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
+2. **PWA (Progressive Web App):** Aggiunta di manifest e service worker per installazione diretta come app su smartphone senza browser bar.
 
 
 
