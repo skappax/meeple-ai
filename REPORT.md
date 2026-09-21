@@ -152,7 +152,14 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 
 ---
 
-## 📊 Stato Avanzamento (Sprint 1, 2, 3, 4, 5, 6 & 7 Completati)
+## 🌐 Istanze Attive & Collegamenti
+- 🌐 **Deploy Live (Render.com):** [https://meeple-ai.onrender.com](https://meeple-ai.onrender.com) (SSL, CDN Cloudflare, auto-deploy da `main`)
+- 📦 **Repository GitHub:** [https://github.com/skappax/meeple-ai](https://github.com/skappax/meeple-ai) (CI/CD abilitata)
+- 🖥️ **Server Locale (Proxmox LXC 102):** `http://192.168.1.174:3000` (gestito dal servizio systemd `meeple-ai.service`)
+
+---
+
+## 📊 Stato Avanzamento (Sprint 1–8 Completati con Successo)
 - [x] Scaffolding Next.js 14 con TypeScript e Tailwind CSS
 - [x] Integrazione e test convalidato della chiave Google Gemini API
 - [x] Endpoint backend `/api/chat` con prompt specializzati e fallback
@@ -181,6 +188,9 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 - [x] **Citazione obbligatoria in coda con riferimento alla regola e manuale (📜 Riferimento: ...)**
 - [x] **Cambio automatico modalità da intento dell'utente (es. domanda di setup da regole)**
 - [x] **Cornice cromatica distintiva e palette colori dedicata per ciascuna delle 6 modalità**
+- [x] **Preparazione al Deploy: Blueprint render.yaml e guida passo-passo RENDER_DEPLOY.md**
+- [x] **Configurazione di sicurezza .gitignore per file .env e chiavi API**
+- [x] **Script di pubblicazione autonoma via REST API (`scripts/publish-api.js`)**
 - [x] **Pubblicazione Repository GitHub: `https://github.com/skappax/meeple-ai`**
 - [x] **Deploy Live Operativo su Render.com: `https://meeple-ai.onrender.com` con HTTPS e Google Gemini integrato**
 - [x] **Skill Antigravity aggiornate per GitHub & Render.com (REST API native)**
@@ -199,9 +209,37 @@ Questo documento traccia in modo persistente **tutte le decisioni tecniche, arch
 
 ---
 
-## 🔮 Prossimi Passi (Roadmap)
-1. **Timer Turno / Segnapunti integrato:** Utility a schermo durante le partite per contare i punti o tenere traccia del tempo per turno.
-2. **PWA (Progressive Web App):** Aggiunta di manifest e service worker per installazione diretta come app su smartphone senza browser bar.
+## 🔮 Idee di Brainstorming & Roadmap per il Futuro
+
+### 1. 📱 PWA (Progressive Web App) per Mobile
+- **Idea:** Aggiungere `manifest.json` e icone tematiche (meeple dorato su sfondo scuro) per consentire l'installazione *"Aggiungi a Schermata Home"* su iOS e Android.
+- **Vantaggio al tavolo:** Si apre a schermo intero come un'app nativa senza le barre del browser, massimizzando lo spazio per le chat e l'uso rapido con una mano.
+
+### 2. ⏱️ Timer Turno & Orologio da Tavolo ("Antidoto all'Analysis Paralysis")
+- **Idea:** Widget flottante o attivabile con un tocco per scandire il tempo per giocatore (es. 60s/90s/2m con rintocco audio discreto o timer cumulativo stile scacchi).
+- **Vantaggio al tavolo:** Aiuta i gruppi a mantenere il ritmo della partita senza dover usare app timer esterne.
+
+### 3. 🧮 Calcolatore Punti Vittoria (Scoring Sheet AI)
+- **Idea:** Modulo di fine partita che guida nel calcolo dei punti vittoria per gioco selezionato (es. Wingspan, Agricola, 7 Wonders, Terraforming Mars). Può funzionare sia con inserimento a campi numerici sia scattando una foto al taccuino segnapunti cartaceo con trascrizione OCR via Gemini Vision.
+
+### 4. 👥 Condivisione Sessione Partita via QR Code (Room Sharing)
+- **Idea:** Generare un QR code visualizzabile a schermo che gli altri giocatori al tavolo possono inquadrare per accedere in sola lettura (o interattiva) alla sessione di gioco attiva, vedendo tutti i verdetti dell'arbitro emessi durante la serata.
+
+### 5. 🗣️ Modalità "Mani Libere" Continua
+- **Idea:** Possibilità di tenere attiva la modalità vocale senza dover premere il microfono ad ogni turno (o con wake-word *"Ehi Meeple"*), ideale per quando si hanno le mani impegnate a mescolare mazzi o piazzare miniature.
+
+### 6. 🏆 Registro Partite & Statistiche del Gruppo (Game Log)
+- **Idea:** Al termine della sessione, possibilità di salvare il riepilogo (gioco, giocatori, vincitore, durata, note divertenti) memorizzandolo nello storico locale o esportabile in CSV/JSON.
+
+---
+
+## 📌 Regola Aurea di Sviluppo (Antigravity Golden Rule)
+> **Ogni volta che si implementa una nuova funzionalità o si prende una decisione architetturale:**
+> 1. Aggiornare e spuntare la sezione **Stato Avanzamento** con i nuovi compiti completati.
+> 2. Documentare la scelta tecnica nel registro **ADR** numerato progressivamente.
+> 3. Rivedere e arricchire la sezione **Idee di Brainstorming & Roadmap per il Futuro**.
+> 4. Verificare che le istanze attive (Cloud Render e Server Locale) siano allineate e operative.
+
 
 
 
